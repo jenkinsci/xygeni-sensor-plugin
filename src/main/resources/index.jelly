@@ -1,0 +1,6 @@
+<?jelly escape-by-default='true'?>
+<div>
+    This Xygeni Sensor Plugin for Jenkins monitors activity in the Server and its nodes. When
+    the sensor detects an unusual activity, it will raise an alert for tracking the origin and
+    taking immediate action to mitigate the risk and prevent further damage.
+</div>

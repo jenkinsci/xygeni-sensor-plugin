@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:section title="${%Xygeni Sensor}">
+        <f:entry field="xygeniTokenSecret" title="${%Xygeni Token Credential Secret}">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="xygeniUrl" title="${%Xygeni URL}">
+            <f:textbox/>
+        </f:entry>
+    </f:section>
+    <f:validateButton title="${%Test Token}" progress="${%Testing...}" method="testXygeniConnection" with="xygeniTokenSecret,xygeniUrl" checkMethod="post" />
+</j:jelly>
