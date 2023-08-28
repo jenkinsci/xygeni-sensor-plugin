@@ -7,11 +7,10 @@ import hudson.slaves.ComputerListener;
 import hudson.slaves.OfflineCause;
 import io.xygeni.plugins.jenkins.model.ComputerEvent;
 import io.xygeni.plugins.jenkins.services.XygeniApiClient;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.logging.Logger;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * It will monitor slave events.
@@ -19,82 +18,86 @@ import java.util.logging.Logger;
 @Extension
 public class XygeniComputerListener extends ComputerListener {
 
-  private static final Logger logger = Logger.getLogger(XygeniComputerListener.class.getName());
+    private static final Logger logger = Logger.getLogger(XygeniComputerListener.class.getName());
 
-  @Override
-  public void onOnline(final Computer computer, final TaskListener listener) throws IOException, InterruptedException {
+    @Override
+    public void onOnline(final Computer computer, final TaskListener listener)
+            throws IOException, InterruptedException {
 
-    XygeniApiClient client = XygeniApiClient.getInstance();
-    if(client == null) {
-      logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
-      return;
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
+            return;
+        }
+
+        ComputerEvent event = ComputerEvent.from(computer, ComputerEvent.Action.online);
+
+        logger.finer("[XygeniComputerListener] send event " + event);
+
+        client.sendEvent(event);
     }
 
-    ComputerEvent event = ComputerEvent.from(computer, ComputerEvent.Type.online);
+    @Override
+    public void onOffline(@Nonnull Computer computer, @CheckForNull OfflineCause cause) {
 
-    client.sendEvent(event);
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
+            return;
+        }
 
-  }
+        ComputerEvent event = ComputerEvent.from(computer, ComputerEvent.Action.offline);
 
-  @Override
-  public void onOffline(@Nonnull Computer computer, @CheckForNull OfflineCause cause) {
+        logger.finer("[XygeniComputerListener] send event " + event);
 
-    XygeniApiClient client = XygeniApiClient.getInstance();
-    if(client == null) {
-      logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
-      return;
+        client.sendEvent(event);
     }
 
-    ComputerEvent event = ComputerEvent.from(computer, ComputerEvent.Type.offline);
+    @Override
+    public void onTemporarilyOnline(Computer computer) {
 
-    client.sendEvent(event);
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
+            return;
+        }
 
-  }
+        ComputerEvent event = ComputerEvent.from(computer, ComputerEvent.Action.temporaryOnline);
 
-  @Override
-  public void onTemporarilyOnline(Computer computer) {
+        logger.finer("[XygeniComputerListener] send event " + event);
 
-    XygeniApiClient client = XygeniApiClient.getInstance();
-    if(client == null) {
-      logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
-      return;
+        client.sendEvent(event);
     }
 
-    ComputerEvent event = ComputerEvent.from(computer, ComputerEvent.Type.temporaryOnline);
+    @Override
+    public void onTemporarilyOffline(Computer computer, OfflineCause cause) {
 
-    client.sendEvent(event);
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
+            return;
+        }
 
-  }
+        ComputerEvent event = ComputerEvent.from(computer, ComputerEvent.Action.temporaryOffline);
 
-  @Override
-  public void onTemporarilyOffline(Computer computer, OfflineCause cause) {
+        logger.finer("[XygeniComputerListener] send event " + event);
 
-
-    XygeniApiClient client = XygeniApiClient.getInstance();
-    if(client == null) {
-      logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
-      return;
+        client.sendEvent(event);
     }
 
-    ComputerEvent event = ComputerEvent.from(computer, ComputerEvent.Type.temporaryOffline);
+    @Override
+    public void onLaunchFailure(Computer computer, TaskListener taskListener) throws IOException, InterruptedException {
 
-    client.sendEvent(event);
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
+            return;
+        }
 
-  }
+        ComputerEvent event = ComputerEvent.from(computer, ComputerEvent.Action.launchFailure);
 
-  @Override
-  public void onLaunchFailure(Computer computer, TaskListener taskListener) throws IOException, InterruptedException {
+        logger.finer("[XygeniComputerListener] send event " + event);
 
-    XygeniApiClient client = XygeniApiClient.getInstance();
-    if(client == null) {
-      logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
-      return;
+        client.sendEvent(event);
     }
-
-    ComputerEvent event = ComputerEvent.from(computer, ComputerEvent.Type.launchFailure);
-
-    client.sendEvent(event);
-  }
-
-
 }

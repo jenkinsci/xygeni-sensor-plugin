@@ -31,7 +31,6 @@ import hudson.model.Saveable;
 import hudson.model.listeners.SaveableListener;
 import io.xygeni.plugins.jenkins.model.ConfigEvent;
 import io.xygeni.plugins.jenkins.services.XygeniApiClient;
-
 import java.util.logging.Logger;
 
 /**
@@ -46,15 +45,17 @@ public class XygeniSaveableListener extends SaveableListener {
     public void onChange(Saveable config, XmlFile file) {
         try {
 
-            if(config == null || file == null) return;
+            if (config == null || file == null) return;
 
             XygeniApiClient client = XygeniApiClient.getInstance();
-            if(client == null) {
-                logger.fine("[XygeniComputerListener] Client null. Event Not Send.");
+            if (client == null) {
+                logger.finer("[XygeniSaveableListener] Client null. Event Not Send.");
                 return;
             }
 
-            ConfigEvent event = ConfigEvent.from(config, file);
+            ConfigEvent event = ConfigEvent.from(config, file, ConfigEvent.Action.onChange);
+
+            logger.finest("[XygeniSaveableListener] Sending event: " + event);
 
             client.sendEvent(event);
 

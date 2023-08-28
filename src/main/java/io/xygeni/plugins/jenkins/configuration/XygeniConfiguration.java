@@ -5,21 +5,21 @@ import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import hudson.Extension;
 import hudson.ExtensionList;
+import hudson.PluginWrapper;
 import hudson.XmlFile;
 import hudson.security.ACL;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
 import io.xygeni.plugins.jenkins.services.XygeniApiClient;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.interceptor.RequirePOST;
-
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Global configuration of Xygeni Plugin.
@@ -51,7 +51,16 @@ public class XygeniConfiguration extends GlobalConfiguration {
         load();
     }
 
-    /** @return the currently configured token, if any */
+    public String getVersion() {
+        for (PluginWrapper plugin : Jenkins.get().getPluginManager().getPlugins()) {
+            if(plugin.getShortName().equals("xygeni")) {
+                return plugin.getVersion();
+            }
+        }
+        return null;
+    }
+
+    /** @return the currently field value, if any */
     public String getXygeniTokenSecret() {
         return xygeniTokenSecret;
     }
@@ -88,9 +97,10 @@ public class XygeniConfiguration extends GlobalConfiguration {
      */
     public FormValidation doCheckXygeniToken(@QueryParameter String value) {
         if (value.equals("")) {
-            return FormValidation.warning("Please specify a Credential Secret that Xygeni API Token could be read from.");
+            return FormValidation.warning(
+                    "Please specify a Credential Secret that Xygeni API Token could be read from.");
         }
-        if(!isValidToken()) {
+        if (!isValidToken()) {
             return FormValidation.warning("Please specify a valid Credential Secret to get Xygeni Api Token.");
         }
         return FormValidation.ok();
@@ -105,7 +115,7 @@ public class XygeniConfiguration extends GlobalConfiguration {
         if (value.equals("")) {
             return FormValidation.warning("Please specify a Xygeni platform URL.");
         }
-        if(!isValidUrl()) {
+        if (!isValidUrl()) {
             return FormValidation.warning("Please specify a valid URL.");
         }
         return FormValidation.ok();
@@ -121,43 +131,37 @@ public class XygeniConfiguration extends GlobalConfiguration {
      */
     @RequirePOST
     public FormValidation doTestXygeniConnection(
-      @QueryParameter(XYGENITOKENSECRET_FIELD) final String xygeniToken,
-      @QueryParameter(XYGENIURL_FIELD) final String xygeniUrl) {
+            @QueryParameter(XYGENITOKENSECRET_FIELD) final String xygeniToken,
+            @QueryParameter(XYGENIURL_FIELD) final String xygeniUrl) {
 
         XygeniApiClient client = XygeniApiClient.getInstance();
-        if(client == null) {
+        if (client == null) {
             return FormValidation.error("Check required values first.");
         }
 
-        if(!client.validateXygeniPing(xygeniUrl)) {
-            return FormValidation.error("Cannot connect to Xygeni platform.");
+        if (!client.validateXygeniPing(xygeniUrl)) {
+            return FormValidation.error("Cannot connect to Xygeni platform. Check URL.");
         }
 
         validConnection = client.validateTokenConnection(xygeniUrl, getXygeniToken());
 
-        if(!validConnection) {
-            return FormValidation.error("Hmmm, Xygeni Api Token is invalid.");
+        if (!validConnection) {
+            return FormValidation.error("Connect to Xygeni Platform but Api Token is not valid.");
         }
 
-        return FormValidation.ok("Great! Your API key is valid.");
-
+        return FormValidation.ok("Great! Connect successfully.");
     }
 
-
-
-    public boolean isValidConfig() {
-        return validConnection;
-    }
 
     /**
      * Read token from credential and return a {@link Secret}
      * @return a Secret
      */
-    public Secret getXygeniToken(){
+    public Secret getXygeniToken() {
         try {
-            if(xygeniTokenSecret == null) return null;
+            if (xygeniTokenSecret == null) return null;
             StringCredentials credential = getCredentialFromId(xygeniTokenSecret);
-            if(credential == null || credential.getSecret().getPlainText().isEmpty()) return null;
+            if (credential == null || credential.getSecret().getPlainText().isEmpty()) return null;
             return credential.getSecret();
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error reading xygeni token secret:", e);
@@ -167,43 +171,36 @@ public class XygeniConfiguration extends GlobalConfiguration {
 
     private boolean isValidUrl() {
 
-        if(xygeniUrl == null) return false;
+        if (xygeniUrl == null) return false;
         try {
             new URL(xygeniUrl).toURI();
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
-
-
     private boolean isValidToken() {
-        if(xygeniTokenSecret == null) return false;
+        if (xygeniTokenSecret == null) return false;
         try {
             StringCredentials credential = getCredentialFromId(xygeniTokenSecret);
             return credential != null && !credential.getSecret().getPlainText().isEmpty();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
 
-    private String getFieldValue(String fieldName, XmlFile file){
+    private String getFieldValue(String fieldName, XmlFile file) {
         return "ht";
     }
 
     public StringCredentials getCredentialFromId(String credentialId) {
         return CredentialsMatchers.firstOrNull(
-          CredentialsProvider.lookupCredentials(
-            StringCredentials.class,
-            Jenkins.get(),
-            ACL.SYSTEM,
-            URIRequirementBuilder.fromUri(null).build()),
-          CredentialsMatchers.allOf(CredentialsMatchers.withId(credentialId))
-        );
+                CredentialsProvider.lookupCredentials(
+                        StringCredentials.class,
+                        Jenkins.get(),
+                        ACL.SYSTEM,
+                        URIRequirementBuilder.fromUri(null).build()),
+                CredentialsMatchers.allOf(CredentialsMatchers.withId(credentialId)));
     }
-
-
 }

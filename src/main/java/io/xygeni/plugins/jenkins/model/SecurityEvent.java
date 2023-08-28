@@ -1,46 +1,47 @@
 package io.xygeni.plugins.jenkins.model;
 
-import hudson.XmlFile;
-import hudson.model.Saveable;
-import io.xygeni.plugins.jenkins.util.UserUtil;
-import net.sf.json.JSONObject;
+import java.util.List;
 
-public class SecurityEvent implements XygeniEvent {
+public class SecurityEvent extends XygeniEvent {
 
-  private String userId;
-  private String userName;
-  private Type type;
+    public static final String TYPE_CLASS = "securityEvent";
 
-  public enum Type {
-    CREATED,
-    AUTHENTICATED
-  }
+    // event type
+    private final Action action;
 
-  public static SecurityEvent from(String userName, Type type) {
-    SecurityEvent securityEvent = new SecurityEvent();
-    securityEvent.setUserId(UserUtil.getUserId());
-    securityEvent.setUserName(userName);
-    securityEvent.setType(type);
+    public enum Action {
+        authenticated,
+        created,
+        failedToLogin
+    }
 
+    public SecurityEvent(Action action) {
+        this.action = action;
+    }
 
-    return securityEvent;
-  }
+    public static SecurityEvent from(String userName, String email, Action action) {
+        SecurityEvent securityEvent = new SecurityEvent(action);
+        securityEvent.setProperty("username", userName);
+        if (email != null) securityEvent.setProperty("email", email);
 
-  public JSONObject toJson() {
-    JSONObject json = new JSONObject();
-    json.put("userId", userId);
-    json.put("userName", userName);
-    json.put("type", type.name());
-    return json;
-  }
+        return securityEvent;
+    }
 
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
-  public void setType(Type type) {
-    this.type = type;
-  }
+    public static SecurityEvent from(String userName, List<String> grantedAuthorities, Action action) {
+        SecurityEvent securityEvent = new SecurityEvent(action);
+        securityEvent.setProperty("username", userName);
+        securityEvent.setProperty("grantedAuthorities", String.join(",", grantedAuthorities));
+
+        return securityEvent;
+    }
+
+    @Override
+    protected String getType() {
+        return TYPE_CLASS;
+    }
+
+    @Override
+    protected String getAction() {
+        return this.action.name();
+    }
 }

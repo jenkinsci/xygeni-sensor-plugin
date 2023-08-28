@@ -66,6 +66,10 @@
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>mailer</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>plain-credentials</artifactId>
     </dependency>
   </dependencies>
@@ -81,6 +85,10 @@
     <pluginRepository>
       <id>repo.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>maven</id>
+      <url>https://repo.maven.apache.org/maven2/</url>
     </pluginRepository>
   </pluginRepositories>
 </project>

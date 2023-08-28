@@ -5,7 +5,6 @@ import hudson.model.Item;
 import hudson.model.listeners.ItemListener;
 import io.xygeni.plugins.jenkins.model.ItemEvent;
 import io.xygeni.plugins.jenkins.services.XygeniApiClient;
-
 import java.util.logging.Logger;
 
 /**
@@ -14,77 +13,85 @@ import java.util.logging.Logger;
 @Extension
 public class XygeniItemListener extends ItemListener {
 
-  private static final Logger logger = Logger.getLogger(XygeniItemListener.class.getName());
+    private static final Logger logger = Logger.getLogger(XygeniItemListener.class.getName());
 
-  @Override
-  public void onDeleted(Item item) {
+    @Override
+    public void onDeleted(Item item) {
 
-    XygeniApiClient client = XygeniApiClient.getInstance();
-    if(client == null) {
-      logger.fine("[XygeniItemListener] Client null. Event Not Send.");
-      return;
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.finer("[XygeniItemListener] Client null. Event Not Send.");
+            return;
+        }
+
+        ItemEvent event = ItemEvent.from(item, ItemEvent.Action.DELETE);
+
+        logger.finest("[XygeniItemListener] send event " + event);
+
+        client.sendEvent(event);
     }
 
-    ItemEvent event = ItemEvent.from(item, ItemEvent.Action.DELETE);
+    @Override
+    public void onCreated(Item item) {
 
-    client.sendEvent(event);
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.fine("[XygeniItemListener] Client null. Event Not Send.");
+            return;
+        }
 
-  }
+        ItemEvent event = ItemEvent.from(item, ItemEvent.Action.CREATED);
 
-  @Override
-  public void onCreated(Item item) {
+        logger.finer("[XygeniItemListener] send event " + event);
 
-    XygeniApiClient client = XygeniApiClient.getInstance();
-    if(client == null) {
-      logger.fine("[XygeniItemListener] Client null. Event Not Send.");
-      return;
+        client.sendEvent(event);
     }
 
-    ItemEvent event = ItemEvent.from(item, ItemEvent.Action.CREATED);
+    @Override
+    public void onRenamed(Item item, String oldName, String newName) {
 
-    client.sendEvent(event);
-  }
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.fine("[XygeniItemListener] Client null. Event Not Send.");
+            return;
+        }
 
-  @Override
-  public void onRenamed(Item item, String oldName, String newName) {
+        ItemEvent event = ItemEvent.from(item, ItemEvent.Action.RENAMED);
 
-    XygeniApiClient client = XygeniApiClient.getInstance();
-    if(client == null) {
-      logger.fine("[XygeniItemListener] Client null. Event Not Send.");
-      return;
+        logger.finer("[XygeniItemListener] send event " + event);
+
+        client.sendEvent(event);
     }
 
-    ItemEvent event = ItemEvent.from(item, ItemEvent.Action.RENAMED);
+    @Override
+    public void onUpdated(Item item) {
 
-    client.sendEvent(event);
-  }
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.fine("[XygeniItemListener] Client null. Event Not Send.");
+            return;
+        }
 
-  @Override
-  public void onUpdated(Item item) {
+        ItemEvent event = ItemEvent.from(item, ItemEvent.Action.UPDATED);
 
-    XygeniApiClient client = XygeniApiClient.getInstance();
-    if(client == null) {
-      logger.fine("[XygeniItemListener] Client null. Event Not Send.");
-      return;
+        logger.finer("[XygeniItemListener] send event " + event);
+
+        client.sendEvent(event);
     }
 
-    ItemEvent event = ItemEvent.from(item, ItemEvent.Action.UPDATED);
+    @Override
+    public void onLocationChanged(Item item, String oldFullName, String newFullName) {
 
-    client.sendEvent(event);
-  }
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.fine("[XygeniItemListener] Client null. Event Not Send.");
+            return;
+        }
 
-  @Override
-  public void onLocationChanged(Item item, String oldFullName, String newFullName) {
+        ItemEvent event = ItemEvent.from(item, ItemEvent.Action.LOCATION_CHANGED);
 
-    XygeniApiClient client = XygeniApiClient.getInstance();
-    if(client == null) {
-      logger.fine("[XygeniItemListener] Client null. Event Not Send.");
-      return;
+        logger.finer("[XygeniItemListener] send event " + event);
+
+        client.sendEvent(event);
     }
-
-    ItemEvent event = ItemEvent.from(item, ItemEvent.Action.LOCATION_CHANGED);
-
-    client.sendEvent(event);
-  }
-
 }

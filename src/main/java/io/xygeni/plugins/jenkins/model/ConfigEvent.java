@@ -2,42 +2,37 @@ package io.xygeni.plugins.jenkins.model;
 
 import hudson.XmlFile;
 import hudson.model.Saveable;
-import io.xygeni.plugins.jenkins.util.UserUtil;
-import net.sf.json.JSONObject;
 
-public class ConfigEvent implements XygeniEvent {
+public class ConfigEvent extends XygeniEvent {
 
-  private String implementation;
-  private String userId;
-  private String fileName;
+    public static final String TYPE_CLASS = "configEvent";
 
-  public static ConfigEvent from(Saveable saveableConfig, XmlFile file) {
-    ConfigEvent configEvent = new ConfigEvent();
-    configEvent.setImplementation(saveableConfig.getClass().getSuperclass().toString());
-    configEvent.setUserId(UserUtil.getUserId());
-    configEvent.setFileName(UserUtil.getUserId());
+    private final Action action;
 
-    return configEvent;
-  }
+    public enum Action {
+        onChange
+    }
 
-  public JSONObject toJson() {
-    JSONObject json = new JSONObject();
-    json.put("userId", userId);
-    json.put("fileName", fileName);
-    json.put("implementation", implementation);
-    return json;
-  }
+    public ConfigEvent(Action type) {
+        this.action = type;
+    }
 
-  public void setImplementation(String implementation) {
-    this.implementation = implementation;
-  }
+    public static ConfigEvent from(Saveable saveableConfig, XmlFile file, Action action) {
+        ConfigEvent configEvent = new ConfigEvent(action);
+        configEvent.setProperty(
+                "implementation", saveableConfig.getClass().getSuperclass().toString());
+        configEvent.setProperty("fileName", file.getFile().getName());
 
+        return configEvent;
+    }
 
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
+    @Override
+    protected String getType() {
+        return TYPE_CLASS;
+    }
 
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
-  }
+    @Override
+    protected String getAction() {
+        return action.name();
+    }
 }

@@ -27,16 +27,12 @@ package io.xygeni.plugins.jenkins.events;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
-import hudson.XmlFile;
-import hudson.model.Saveable;
-import hudson.model.listeners.SaveableListener;
-import io.xygeni.plugins.jenkins.model.ConfigEvent;
 import io.xygeni.plugins.jenkins.model.SecurityEvent;
 import io.xygeni.plugins.jenkins.services.XygeniApiClient;
+import io.xygeni.plugins.jenkins.util.UserUtil;
+import java.util.logging.Logger;
 import jenkins.security.SecurityListener;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.logging.Logger;
 
 /**
  * A listener of user access events
@@ -47,16 +43,19 @@ public class XygeniSecurityListener extends SecurityListener {
     private static final Logger logger = Logger.getLogger(XygeniSecurityListener.class.getName());
 
     @Override
-    protected void userCreated(@NonNull String username) {
+    protected void authenticated2(@NonNull UserDetails details) {
         try {
 
             XygeniApiClient client = XygeniApiClient.getInstance();
-            if(client == null) {
+            if (client == null) {
                 logger.fine("[XygeniSecurityListener] Client null. Event Not Send.");
                 return;
             }
 
-            SecurityEvent event = SecurityEvent.from(username, SecurityEvent.Type.CREATED);
+            String userEmail = UserUtil.getUserConfiguredEmail(details.getUsername());
+
+            SecurityEvent event =
+                    SecurityEvent.from(details.getUsername(), userEmail, SecurityEvent.Action.authenticated);
 
             client.sendEvent(event);
 
@@ -65,5 +64,47 @@ public class XygeniSecurityListener extends SecurityListener {
         }
     }
 
+    @Override
+    protected void userCreated(@NonNull String username) {
+        try {
 
+            XygeniApiClient client = XygeniApiClient.getInstance();
+            if (client == null) {
+                logger.finer("[XygeniSecurityListener] Client null. Event Not Send.");
+                return;
+            }
+
+            String userEmail = UserUtil.getUserConfiguredEmail(username);
+
+            SecurityEvent event = SecurityEvent.from(username, userEmail, SecurityEvent.Action.created);
+
+            logger.finest("[XygeniSecurityListener] Sending event " + event);
+
+            client.sendEvent(event);
+
+        } catch (Exception e) {
+            logger.severe("[XygeniSecurityListener] Failed to process userCreated event: " + e.getMessage());
+        }
+    }
+
+    @Override
+    protected void failedToLogIn(@NonNull String username) {
+        try {
+
+            XygeniApiClient client = XygeniApiClient.getInstance();
+            if (client == null) {
+                logger.fine("[XygeniSecurityListener] Client null. Event Not Send.");
+                return;
+            }
+
+            SecurityEvent event = SecurityEvent.from(username, (String) null, SecurityEvent.Action.failedToLogin);
+
+            logger.finest("[XygeniSecurityListener] Sending event " + event);
+
+            client.sendEvent(event);
+
+        } catch (Exception e) {
+            logger.severe("[XygeniSecurityListener] Failed to process failedToLogIn event: " + e.getMessage());
+        }
+    }
 }

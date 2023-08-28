@@ -1,84 +1,72 @@
 package io.xygeni.plugins.jenkins.model;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Computer;
-import hudson.model.TaskListener;
 import hudson.model.labels.LabelAtom;
-import io.xygeni.plugins.jenkins.util.UserUtil;
+import java.util.List;
 import jenkins.model.Jenkins;
-import net.sf.json.JSONObject;
+import org.apache.commons.compress.utils.Lists;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Logger;
+public class ComputerEvent extends XygeniEvent {
 
-public class ComputerEvent implements XygeniEvent {
+    private final String TYPE_CLASS = "computerEvent";
 
-  private static final Logger logger = Logger.getLogger(ComputerEvent.class.getName());
+    private final Action action;
 
-  public enum Type {
-    online,
-    offline,
-    temporaryOnline,
-    temporaryOffline,
-    launchFailure
-
-  }
-
-  private String userId;
-  private String nodeName;
-  private Set<String> labels;
-  private Type type;
-
-  public static ComputerEvent from(Computer computer, Type type) {
-
-    ComputerEvent computerEvent = new ComputerEvent();
-    computerEvent.setType(type);
-    computerEvent.setUserId(UserUtil.getUserId());
-    computerEvent.setNodeName(getNodeName(computer));
-    computerEvent.setLabels(getComputerLabels(computer));
-
-    return computerEvent;
-  }
-
-  public JSONObject toJson() {
-    JSONObject json = new JSONObject();
-    json.put("type", type);
-    json.put("userId", userId);
-    json.put("nodeName", nodeName);
-    json.put("labels", labels);
-    return json;
-  }
-
-  public void setLabels(Set<String> labels) { this.labels = labels; }
-
-  public void setNodeName(String nodeName) { this.nodeName = nodeName; }
-  public void setUserId(String userId) {
-    this.userId = userId;
-  }
-
-  public void setType(Type type) { this.type = type; }
-
-
-  private static Set<String> getComputerLabels(Computer computer) {
-    Set<String> labels = new HashSet<>();
-
-    if(computer.getNode() == null) return labels;
-
-    for (LabelAtom label: computer.getNode().getAssignedLabels()) {
-      labels.add(label.getName());
+    public enum Action {
+        online,
+        offline,
+        temporaryOnline,
+        temporaryOffline,
+        launchFailure
     }
 
-    return labels;
-  }
+    public ComputerEvent(Action type) {
+        this.action = type;
+    }
 
-  private static String getNodeName(Computer computer){
-    if(computer == null){
-      return "unknown";
+    public static ComputerEvent from(Computer computer, Action action) {
+
+        ComputerEvent computerEvent = new ComputerEvent(action);
+        computerEvent.setProperty("nodeName", getNodeName(computer));
+        computerEvent.setProperty("labels", getComputerLabels(computer));
+
+        return computerEvent;
     }
-    if (computer instanceof Jenkins.MasterComputer) {
-      return "master";
-    } else {
-      return computer.getName();
+
+    @SuppressFBWarnings
+    private static String getComputerLabels(Computer computer) {
+        List<String> labels = Lists.newArrayList();
+
+        if (computer.getNode() == null) return "";
+
+        for (LabelAtom label : computer.getNode().getAssignedLabels()) {
+            if (label != null) {
+                labels.add(label.getName());
+            }
+        }
+
+        return String.join(",", labels);
     }
-  }
+
+    private static String getNodeName(Computer computer) {
+        if (computer == null) {
+            return "unknown";
+        }
+        if (computer instanceof Jenkins.MasterComputer) {
+            return "master";
+        } else {
+            return computer.getName();
+        }
+    }
+
+    @Override
+    protected String getType() {
+        return TYPE_CLASS;
+    }
+
+    @Override
+    protected String getAction() {
+        return this.action.name();
+    }
 }
