@@ -53,7 +53,7 @@ public class XygeniConfiguration extends GlobalConfiguration {
 
     public String getVersion() {
         for (PluginWrapper plugin : Jenkins.get().getPluginManager().getPlugins()) {
-            if(plugin.getShortName().equals("xygeni")) {
+            if (plugin.getShortName().equals("xygeni")) {
                 return plugin.getVersion();
             }
         }
@@ -151,7 +151,6 @@ public class XygeniConfiguration extends GlobalConfiguration {
 
         return FormValidation.ok("Great! Connect successfully.");
     }
-
 
     /**
      * Read token from credential and return a {@link Secret}
