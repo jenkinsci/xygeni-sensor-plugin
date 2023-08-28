@@ -30,19 +30,17 @@ public class XygeniConfigurationTest {
             assertNull("token not set initially", XygeniConfiguration.get().getXygeniTokenSecret());
             HtmlForm config = r.createWebClient().goTo("configure").getFormByName("config");
 
-
             HtmlTextInput tokenField = config.getInputByName("_.xygeniTokenSecret");
             tokenField.setText("xytoken");
             HtmlTextInput textbox = config.getInputByName("_.xygeniUrl");
             textbox.setText("http://localhost:8080");
 
-
             r.submit(config);
 
             assertEquals(
-              "global config Xygeni Token Secret is permanent saved",
-              "xytoken",
-              XygeniConfiguration.get().getXygeniTokenSecret());
+                    "global config Xygeni Token Secret is permanent saved",
+                    "xytoken",
+                    XygeniConfiguration.get().getXygeniTokenSecret());
 
             assertEquals(
                     "global config Xygeni URL is permanent saved",
