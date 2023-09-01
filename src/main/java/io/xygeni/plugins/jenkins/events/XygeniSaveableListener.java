@@ -31,15 +31,20 @@ import hudson.model.Saveable;
 import hudson.model.listeners.SaveableListener;
 import io.xygeni.plugins.jenkins.model.ConfigEvent;
 import io.xygeni.plugins.jenkins.services.XygeniApiClient;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * A listener of saveable events
+ * Listener of saveable events.
+ *
+ * @author Victor de la Rosa
  */
 @Extension
 public class XygeniSaveableListener extends SaveableListener {
 
     private static final Logger logger = Logger.getLogger(XygeniSaveableListener.class.getName());
+
+    private List<String> excludedFiles = List.of("queue.xml", "build.xml");
 
     @Override
     public void onChange(Saveable config, XmlFile file) {
@@ -53,9 +58,11 @@ public class XygeniSaveableListener extends SaveableListener {
                 return;
             }
 
+            if (excludedFiles.contains(file.getFile().getName())) return;
+
             ConfigEvent event = ConfigEvent.from(config, file, ConfigEvent.Action.onChange);
 
-            logger.finest("[XygeniSaveableListener] Sending event: " + event);
+            logger.finer("[XygeniSaveableListener] Sending event: " + event);
 
             client.sendEvent(event);
 

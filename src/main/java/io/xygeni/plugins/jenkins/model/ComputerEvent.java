@@ -9,7 +9,7 @@ import org.apache.commons.compress.utils.Lists;
 
 public class ComputerEvent extends XygeniEvent {
 
-    private final String TYPE_CLASS = "computerEvent";
+    private static final String TYPE_CLASS = "computerEvent";
 
     private final Action action;
 
@@ -34,7 +34,9 @@ public class ComputerEvent extends XygeniEvent {
         return computerEvent;
     }
 
-    @SuppressFBWarnings
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "False positive computer.getNode()")
     private static String getComputerLabels(Computer computer) {
         List<String> labels = Lists.newArrayList();
 

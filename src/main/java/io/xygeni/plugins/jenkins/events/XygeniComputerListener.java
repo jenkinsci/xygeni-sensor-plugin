@@ -7,13 +7,14 @@ import hudson.slaves.ComputerListener;
 import hudson.slaves.OfflineCause;
 import io.xygeni.plugins.jenkins.model.ComputerEvent;
 import io.xygeni.plugins.jenkins.services.XygeniApiClient;
-import java.io.IOException;
 import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 /**
  * It will monitor slave events.
+ *
+ * @author Victor de la Rosa
  */
 @Extension
 public class XygeniComputerListener extends ComputerListener {
@@ -21,8 +22,7 @@ public class XygeniComputerListener extends ComputerListener {
     private static final Logger logger = Logger.getLogger(XygeniComputerListener.class.getName());
 
     @Override
-    public void onOnline(final Computer computer, final TaskListener listener)
-            throws IOException, InterruptedException {
+    public void onOnline(final Computer computer, final TaskListener listener) {
 
         XygeniApiClient client = XygeniApiClient.getInstance();
         if (client == null) {
@@ -86,7 +86,7 @@ public class XygeniComputerListener extends ComputerListener {
     }
 
     @Override
-    public void onLaunchFailure(Computer computer, TaskListener taskListener) throws IOException, InterruptedException {
+    public void onLaunchFailure(Computer computer, TaskListener taskListener) {
 
         XygeniApiClient client = XygeniApiClient.getInstance();
         if (client == null) {

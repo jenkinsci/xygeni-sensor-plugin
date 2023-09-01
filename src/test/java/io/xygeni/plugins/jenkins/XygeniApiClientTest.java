@@ -31,7 +31,7 @@ public class XygeniApiClientTest {
 
                 // set test connection
                 HtmlForm config = client.goTo("configure").getFormByName("config");
-                HtmlTextInput tokenField = config.getInputByName("_.xygeniTokenSecret");
+                HtmlTextInput tokenField = config.getInputByName("_.xygeniTokenSecretId");
                 tokenField.setText("xytoken");
                 HtmlTextInput urlbox = config.getInputByName("_.xygeniUrl");
                 urlbox.setText("http://localhost:9999");
@@ -40,15 +40,15 @@ public class XygeniApiClientTest {
                 assertThat(
                         "listener write event to log",
                         logger,
-                        LoggerRule.recorded(Level.FINEST, containsString("[XygeniSaveableListener] Sending event:")));
+                        LoggerRule.recorded(Level.FINER, containsString("[XygeniSaveableListener] Sending event:")));
 
                 assertThat(
-                        "listener write errors to log",
+                        "client write request to log",
                         logger,
                         LoggerRule.recorded(Level.FINEST, containsString("[XygeniApiClient] Sending post:")));
 
                 assertThat(
-                        "listener write errors to log",
+                        "client write errors to log",
                         logger,
                         LoggerRule.recorded(Level.WARNING, containsString("[XygeniApiClient] sendEvent error")));
             }

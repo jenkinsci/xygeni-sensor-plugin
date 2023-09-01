@@ -27,10 +27,10 @@ public class XygeniConfigurationTest {
     public void uiAndStorage() throws Throwable {
         sessions.then(r -> {
             assertNull("url not set initially", XygeniConfiguration.get().getXygeniUrl());
-            assertNull("token not set initially", XygeniConfiguration.get().getXygeniTokenSecret());
+            assertNull("token not set initially", XygeniConfiguration.get().getXygeniTokenSecretId());
             HtmlForm config = r.createWebClient().goTo("configure").getFormByName("config");
 
-            HtmlTextInput tokenField = config.getInputByName("_.xygeniTokenSecret");
+            HtmlTextInput tokenField = config.getInputByName("_.xygeniTokenSecretId");
             tokenField.setText("xytoken");
             HtmlTextInput textbox = config.getInputByName("_.xygeniUrl");
             textbox.setText("http://localhost:8080");
@@ -40,7 +40,7 @@ public class XygeniConfigurationTest {
             assertEquals(
                     "global config Xygeni Token Secret is permanent saved",
                     "xytoken",
-                    XygeniConfiguration.get().getXygeniTokenSecret());
+                    XygeniConfiguration.get().getXygeniTokenSecretId());
 
             assertEquals(
                     "global config Xygeni URL is permanent saved",

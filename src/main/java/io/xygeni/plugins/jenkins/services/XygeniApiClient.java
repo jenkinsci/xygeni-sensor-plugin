@@ -8,11 +8,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
+/**
+ * Xygeni platform Jenkins Events api client
+ * @author Victor de la Rosa
+ */
 public class XygeniApiClient {
 
     private static XygeniApiClient client;
@@ -27,12 +32,18 @@ public class XygeniApiClient {
 
         XygeniConfiguration descriptor = XygeniConfiguration.get();
 
-        if (descriptor.getXygeniTokenSecret() == null) return null;
-        if (descriptor.getXygeniUrl() == null) return null;
+        if (descriptor.getXygeniTokenSecretId() == null || descriptor.getXygeniUrl() == null) return null;
 
         client = new XygeniApiClient(descriptor.getXygeniUrl(), descriptor.getXygeniToken());
 
         return client;
+    }
+
+    public static XygeniApiClient getInstance(String xygeniUrl, Secret xygeniTokenSecret) {
+
+        if (xygeniUrl == null || xygeniTokenSecret == null) return null;
+
+        return new XygeniApiClient(xygeniUrl, xygeniTokenSecret);
     }
 
     private XygeniApiClient(String url, Secret tokenSecret) {
@@ -40,34 +51,58 @@ public class XygeniApiClient {
         this.tokenSecret = tokenSecret;
     }
 
-    public boolean sendEvent(XygeniEvent event) {
+    public void sendEvent(XygeniEvent event) {
 
         try {
-            return post(event.toJson().toString(), url, tokenSecret == null ? null : tokenSecret.getPlainText());
+            post(
+                    event.toJson().toString(),
+                    url + "/jenkins/event",
+                    tokenSecret == null ? null : tokenSecret.getPlainText());
         } catch (IOException e) {
-            logger.log(Level.WARNING, "[XygeniApiClient] sendEvent error", e);
+            logger.log(Level.WARNING, "[XygeniApiClient] sendEvent error " + e.getMessage());
+            logger.log(Level.FINEST, "[XygeniApiClient] sendEvent error:", e);
+        }
+    }
+
+    public boolean validateXygeniPing() {
+        try {
+            return get(url + "/ping");
+
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "[XygeniApiClient] validateXygeniPing error " + e.getMessage());
+            logger.log(Level.FINEST, "[XygeniApiClient] validateXygeniPing error:", e);
+            return false;
+        }
+    }
+
+    public boolean validateTokenConnection() {
+        try {
+            return post("", url + "/jenkins/check", tokenSecret.getPlainText());
+
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "[XygeniApiClient] validateTokenConnection error " + e.getMessage());
+            logger.log(Level.FINEST, "[XygeniApiClient] validateTokenConnection error.", e);
+            return false;
+        }
+    }
+
+    private boolean get(String url) throws IOException {
+
+        logger.finest("[XygeniApiClient] Sending get: " + url);
+
+        final HttpGet httpGet = new HttpGet(url);
+
+        httpGet.setHeader("Accept", "application/json");
+        httpGet.setHeader("Content-type", "application/json");
+
+        try (CloseableHttpClient client = HttpClients.createDefault();
+                CloseableHttpResponse response = client.execute(httpGet)) {
+
+            final int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) return true;
+            logger.fine("[XygeniApiClient] HttpGet error: " + statusCode + " requesting: " + url);
         }
         return false;
-    }
-
-    public boolean validateXygeniPing(String xygeniUrl) {
-        try {
-            return post(null, xygeniUrl + "/ping", null);
-
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "[XygeniApiClient] validateXygeniPing - error.", e);
-            return false;
-        }
-    }
-
-    public boolean validateTokenConnection(String xygeniUrl, Secret tokenSecret) {
-        try {
-            return post("", xygeniUrl + "/jenkins/check", tokenSecret.getPlainText());
-
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "[XygeniApiClient] validateTokenConnection error.", e);
-            return false;
-        }
     }
 
     private boolean post(String json, String url, String token) throws IOException {
@@ -93,7 +128,7 @@ public class XygeniApiClient {
 
             final int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) return true;
-            logger.fine("[XygeniApiClient] Http error: " + statusCode + " requesting: " + url);
+            logger.fine("[XygeniApiClient] HttpPost error: " + statusCode + " requesting: " + url);
         }
         return false;
     }

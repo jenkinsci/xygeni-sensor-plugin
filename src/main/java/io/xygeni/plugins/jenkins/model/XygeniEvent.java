@@ -45,11 +45,11 @@ public abstract class XygeniEvent {
 
     @Override
     public String toString() {
-        return "XygeniEvent{" + "jenkinsUrl="
-                + getJenkinsUrl() + "userId="
-                + getCurrentUserId() + "type="
-                + getType() + "action="
-                + getAction() + "properties="
-                + properties + '}';
+        return "XygeniEvent{"
+                + ", jenkinsUrl=" + getJenkinsUrl()
+                + ", userId=" + getCurrentUserId()
+                + ", type=" + getType()
+                + ", action=" + getAction()
+                + ", properties=" + properties + '}';
     }
 }

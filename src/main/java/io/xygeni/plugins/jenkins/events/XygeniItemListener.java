@@ -8,7 +8,9 @@ import io.xygeni.plugins.jenkins.services.XygeniApiClient;
 import java.util.logging.Logger;
 
 /**
- * It will monitor item events.
+ * Monitor item events.
+ *
+ * @author Victor de la Rosa
  */
 @Extension
 public class XygeniItemListener extends ItemListener {
@@ -20,13 +22,13 @@ public class XygeniItemListener extends ItemListener {
 
         XygeniApiClient client = XygeniApiClient.getInstance();
         if (client == null) {
-            logger.finer("[XygeniItemListener] Client null. Event Not Send.");
+            logger.finest("[XygeniItemListener] Client null. Event Not Send.");
             return;
         }
 
         ItemEvent event = ItemEvent.from(item, ItemEvent.Action.DELETE);
 
-        logger.finest("[XygeniItemListener] send event " + event);
+        logger.finer("[XygeniItemListener] send event " + event);
 
         client.sendEvent(event);
     }

@@ -19,9 +19,8 @@ public class ConfigEvent extends XygeniEvent {
 
     public static ConfigEvent from(Saveable saveableConfig, XmlFile file, Action action) {
         ConfigEvent configEvent = new ConfigEvent(action);
-        configEvent.setProperty(
-                "implementation", saveableConfig.getClass().getSuperclass().toString());
-        configEvent.setProperty("fileName", file.getFile().getName());
+        configEvent.setProperty("implementation", saveableConfig.getClass().toString());
+        configEvent.setProperty("fileName", file.getFile().getPath());
 
         return configEvent;
     }

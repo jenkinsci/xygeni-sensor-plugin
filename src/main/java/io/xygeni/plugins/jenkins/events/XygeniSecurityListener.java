@@ -35,7 +35,9 @@ import jenkins.security.SecurityListener;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * A listener of user access events
+ * Listener of user access events.
+ *
+ * @author Victor de la Rosa
  */
 @Extension
 public class XygeniSecurityListener extends SecurityListener {
@@ -56,6 +58,8 @@ public class XygeniSecurityListener extends SecurityListener {
 
             SecurityEvent event =
                     SecurityEvent.from(details.getUsername(), userEmail, SecurityEvent.Action.authenticated);
+
+            logger.finer("[XygeniSecurityListener] Sending event: " + event);
 
             client.sendEvent(event);
 
@@ -78,7 +82,7 @@ public class XygeniSecurityListener extends SecurityListener {
 
             SecurityEvent event = SecurityEvent.from(username, userEmail, SecurityEvent.Action.created);
 
-            logger.finest("[XygeniSecurityListener] Sending event " + event);
+            logger.finer("[XygeniSecurityListener] Sending event " + event);
 
             client.sendEvent(event);
 
@@ -99,7 +103,7 @@ public class XygeniSecurityListener extends SecurityListener {
 
             SecurityEvent event = SecurityEvent.from(username, (String) null, SecurityEvent.Action.failedToLogin);
 
-            logger.finest("[XygeniSecurityListener] Sending event " + event);
+            logger.finer("[XygeniSecurityListener] Sending event " + event);
 
             client.sendEvent(event);
 

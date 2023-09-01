@@ -38,7 +38,9 @@ import java.io.File;
 import java.util.logging.Logger;
 
 /**
- * A listener of scm events
+ * Listener of scm events.
+ *
+ * @author Victor de la Rosa
  */
 @Extension
 public class XygeniScmListener extends SCMListener {
@@ -52,8 +54,7 @@ public class XygeniScmListener extends SCMListener {
             FilePath workspace,
             TaskListener listener,
             File changelogFile,
-            SCMRevisionState pollingBaseline)
-            throws Exception {
+            SCMRevisionState pollingBaseline) {
         try {
 
             XygeniApiClient client = XygeniApiClient.getInstance();
@@ -64,7 +65,7 @@ public class XygeniScmListener extends SCMListener {
 
             SCMEvent event = SCMEvent.from(run, listener, SCMEvent.Action.onCheckout);
 
-            logger.finest("[XygeniScmListener] Sending event " + event);
+            logger.finer("[XygeniScmListener] Sending event " + event);
 
             client.sendEvent(event);
 
