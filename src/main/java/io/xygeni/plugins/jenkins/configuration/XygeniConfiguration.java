@@ -34,7 +34,9 @@ public class XygeniConfiguration extends GlobalConfiguration {
     private static final String XYGENIURL_FIELD = "xygeniUrl";
     private static final String XYGENITOKENSECRETID_FIELD = "xygeniTokenSecretId";
 
+    @SuppressWarnings("lgtm[jenkins/plaintext-storage]")
     private String xygeniTokenSecretId;
+
     private String xygeniUrl;
 
     /** @return the singleton instance */
@@ -91,7 +93,9 @@ public class XygeniConfiguration extends GlobalConfiguration {
      * @param value form field value
      * @return FormValidation ok if not empty or warning message
      */
+    @RequirePOST
     public FormValidation doCheckXygeniToken(@QueryParameter String value) {
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         if (value.isEmpty()) {
             return FormValidation.warning(
                     "Please specify a Credential Secret that Xygeni API Token could be read from.");
@@ -107,7 +111,9 @@ public class XygeniConfiguration extends GlobalConfiguration {
      * @param value form field value
      * @return FormValidation ok if not empty or warning message
      */
+    @RequirePOST
     public FormValidation doCheckXygeniUrl(@QueryParameter String value) {
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         if (value.isEmpty()) {
             return FormValidation.warning("Please specify a Xygeni platform URL.");
         }
@@ -130,6 +136,7 @@ public class XygeniConfiguration extends GlobalConfiguration {
             @QueryParameter(XYGENITOKENSECRETID_FIELD) final String xygeniTokenSecretIdField,
             @QueryParameter(XYGENIURL_FIELD) final String xygeniUrlField) {
 
+        Jenkins.get().checkPermission(Jenkins.ADMINISTER);
         Secret xygeniToken = CredentialUtil.getSecret(xygeniTokenSecretIdField);
 
         XygeniApiClient client = XygeniApiClient.getInstance(xygeniUrlField, xygeniToken);
