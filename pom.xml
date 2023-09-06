@@ -9,16 +9,16 @@
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
-  <artifactId>xygeni</artifactId>
+  <artifactId>xygeni-sensor</artifactId>
   <version>${revision}${changelist}</version>
 
   <packaging>hpi</packaging>
 
   <name>Xygeni-Sensor</name>
-  <description>Xygeni-Sensor enables you to integrate a Xygeni Scanner execution step into a pipeline,
-    display execution results in the build view, and
-    collect information from the Jenkins system to identify unusual activity.</description>
-  <url>https://github.com/jenkinsci/xygeni-plugin</url>
+  <description>Xygeni Sensor monitors user actions to identify unusual behaviour or deviations from normal
+    patterns that indicate emerging threats. Xygeni allows you to proactively identify risky or suspicious
+    activity, providing automated real-time alerts. (Requires Xygeni platform license)</description>
+  <url>https://github.com/${gitHubRepo}</url>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -37,7 +37,7 @@
     <revision>1.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-    <jenkins.version>2.361.1</jenkins.version>
+    <jenkins.version>2.361.4</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <spotless.check.skip>false</spotless.check.skip>
   </properties>
@@ -47,7 +47,7 @@
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-2.361.x</artifactId>
-        <version>1580.v47b_429a_c853a</version>
+        <version>2102.v854b_fec19c92</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -55,6 +55,7 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>

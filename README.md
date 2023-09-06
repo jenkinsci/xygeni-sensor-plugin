@@ -20,6 +20,7 @@ Systematically prevent and remediate risks everywhere in the Software Supply Cha
 
 ## Attack Detection
 Integrating anomaly detection is a proactive measure to safeguard your business operations by identifying unusual patterns indicating emerging threats.
+
 ![docs/images/xygeni-unusual-activity.png](docs/images/xygeni-unusual-activity.png)
 
 # Key features
