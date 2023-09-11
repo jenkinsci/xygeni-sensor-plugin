@@ -1,6 +1,10 @@
 <?jelly escape-by-default='true'?>
 <div>
-    This Xygeni Sensor Plugin for Jenkins monitors activity in the Server and its nodes. When
-    the sensor detects an unusual activity, it will raise an alert for tracking the origin and
-    taking immediate action to mitigate the risk and prevent further damage.
+    Xygeni is a Software Supply Chain Security platform that provides visibility, security, and integrity in DevOps
+    environments, reducing the risk of breaches and detecting potential attacks. It ensures end-to-end software
+    development and delivery security in your software releases.
+
+    Xygeni Sensor monitors user actions to identify unusual behaviour or deviations from normal patterns that
+    indicate emerging threats. Xygeni allows you to proactively identify risky or suspicious activity, providing
+    automated real-time alerts. (Requires Xygeni platform license)
 </div>
