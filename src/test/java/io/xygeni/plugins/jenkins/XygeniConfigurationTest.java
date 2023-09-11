@@ -2,9 +2,9 @@ package io.xygeni.plugins.jenkins;
 
 import static org.junit.Assert.*;
 
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import io.xygeni.plugins.jenkins.configuration.XygeniConfiguration;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlTextInput;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsSessionRule;
