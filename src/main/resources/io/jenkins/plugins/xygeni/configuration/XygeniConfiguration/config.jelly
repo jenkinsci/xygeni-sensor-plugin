@@ -9,5 +9,5 @@
             <f:textbox checkMethod="post"/>
         </f:entry>
     </f:section>
-    <f:validateButton title="${%Test Token}" progress="${%Testing...}" method="testXygeniConnection" with="xygeniTokenSecretId,xygeniUrl" checkMethod="post" />
+    <f:validateButton title="${%Test Token}" progress="${%Testing...}" method="testXygeniConnection" with="xygeniTokenSecretId,xygeniUrl" />
 </j:jelly>
