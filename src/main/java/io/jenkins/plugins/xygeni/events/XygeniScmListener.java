@@ -32,6 +32,7 @@ import hudson.model.TaskListener;
 import hudson.model.listeners.SCMListener;
 import hudson.scm.SCM;
 import hudson.scm.SCMRevisionState;
+import io.jenkins.plugins.xygeni.configuration.XygeniConfiguration;
 import io.jenkins.plugins.xygeni.model.SCMEvent;
 import io.jenkins.plugins.xygeni.services.XygeniApiClient;
 import java.io.File;
@@ -55,6 +56,9 @@ public class XygeniScmListener extends SCMListener {
             TaskListener listener,
             File changelogFile,
             SCMRevisionState pollingBaseline) {
+
+        if (!XygeniConfiguration.get().isEmitScmEvents()) return;
+
         try {
 
             XygeniApiClient client = XygeniApiClient.getInstance();

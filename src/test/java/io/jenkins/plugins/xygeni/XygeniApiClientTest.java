@@ -3,55 +3,50 @@ package io.jenkins.plugins.xygeni;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
+import io.jenkins.plugins.xygeni.events.XygeniPluginsMonitor;
 import java.util.logging.Level;
-import org.htmlunit.html.HtmlForm;
-import org.htmlunit.html.HtmlTextInput;
 import org.junit.Rule;
 import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsSessionRule;
 import org.jvnet.hudson.test.LoggerRule;
 
-public class XygeniApiClientTest {
+public class XygeniApiClientTest extends XygeniBaseTest {
 
     @Rule
-    public JenkinsSessionRule sessions = new JenkinsSessionRule();
+    public JenkinsSessionRule jr = new JenkinsSessionRule();
 
     public @Rule LoggerRule logger = new LoggerRule();
 
-    /**
-     * Run sendEvent
-     */
     @Test
-    public void testEventLogger() throws Throwable {
-        sessions.then(r -> {
+    public void testPluginMonitorEvents() throws Throwable {
+        jr.then(r -> {
             logger.capture(100).record("io.jenkins.plugins.xygeni", Level.ALL);
 
-            try (JenkinsRule.WebClient client = r.createWebClient()) {
+            addCredentialToRule("XygeniToken", "anyvalue", r);
+            configureXygeni(r);
 
-                // set test connection
-                HtmlForm config = client.goTo("configure").getFormByName("config");
-                HtmlTextInput tokenField = config.getInputByName("_.xygeniTokenSecretId");
-                tokenField.setText("xytoken");
-                HtmlTextInput urlbox = config.getInputByName("_.xygeniUrl");
-                urlbox.setText("http://localhost:9999");
-                r.submit(config);
+            XygeniPluginsMonitor pm = new XygeniPluginsMonitor();
 
-                assertThat(
-                        "send event is not logged",
-                        logger,
-                        LoggerRule.recorded(Level.FINER, containsString("[XygeniSaveableListener] Sending event:")));
+            pm.doRun();
 
-                assertThat(
-                        "api client request is not logged",
-                        logger,
-                        LoggerRule.recorded(Level.FINEST, containsString("[XygeniApiClient] Sending post:")));
+            // simulate periodic run
+            Thread.sleep(500);
+            pm.doRun();
 
-                assertThat(
-                        "api client error is not logged",
-                        logger,
-                        LoggerRule.recorded(Level.WARNING, containsString("[XygeniApiClient] sendEvent error")));
-            }
+            assertThat(
+                    "send event is not logged",
+                    logger,
+                    LoggerRule.recorded(Level.FINER, containsString("[XygeniPluginMonitor] Sending event:")));
+
+            assertThat(
+                    "api client request is not logged",
+                    logger,
+                    LoggerRule.recorded(Level.FINEST, containsString("[XygeniApiClient] Sending post:")));
+
+            assertThat(
+                    "api client error is not logged",
+                    logger,
+                    LoggerRule.recorded(Level.WARNING, containsString("[XygeniApiClient] sendEvent error")));
         });
     }
 }

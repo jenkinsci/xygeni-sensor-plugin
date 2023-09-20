@@ -29,6 +29,7 @@ import hudson.Extension;
 import hudson.XmlFile;
 import hudson.model.Saveable;
 import hudson.model.listeners.SaveableListener;
+import io.jenkins.plugins.xygeni.configuration.XygeniConfiguration;
 import io.jenkins.plugins.xygeni.model.ConfigEvent;
 import io.jenkins.plugins.xygeni.services.XygeniApiClient;
 import java.util.List;
@@ -49,6 +50,8 @@ public class XygeniSaveableListener extends SaveableListener {
     @Override
     public void onChange(Saveable config, XmlFile file) {
         try {
+
+            if (!XygeniConfiguration.get().isEmitConfigEvents()) return;
 
             if (config == null || file == null) return;
 
