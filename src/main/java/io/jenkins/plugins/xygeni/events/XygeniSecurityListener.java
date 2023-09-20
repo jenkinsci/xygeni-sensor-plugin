@@ -91,7 +91,7 @@ public class XygeniSecurityListener extends SecurityListener {
             return;
         }
 
-        SecurityEvent event = SecurityEvent.from(username, userEmail, SecurityEvent.Action.authenticated);
+        SecurityEvent event = SecurityEvent.from(username, userEmail, action);
 
         logger.finer("[XygeniSecurityListener] Sending event: " + event);
 
