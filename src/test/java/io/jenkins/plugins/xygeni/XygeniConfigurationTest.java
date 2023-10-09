@@ -3,13 +3,11 @@ package io.jenkins.plugins.xygeni;
 import static org.junit.Assert.*;
 
 import io.jenkins.plugins.xygeni.configuration.XygeniConfiguration;
-import org.htmlunit.html.HtmlForm;
-import org.htmlunit.html.HtmlTextInput;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsSessionRule;
 
-public class XygeniConfigurationTest {
+public class XygeniConfigurationTest extends XygeniBaseTest {
 
     @Rule
     public JenkinsSessionRule sessions = new JenkinsSessionRule();
@@ -28,18 +26,12 @@ public class XygeniConfigurationTest {
         sessions.then(r -> {
             assertNull("url not set initially", XygeniConfiguration.get().getXygeniUrl());
             assertNull("token not set initially", XygeniConfiguration.get().getXygeniTokenSecretId());
-            HtmlForm config = r.createWebClient().goTo("configure").getFormByName("config");
 
-            HtmlTextInput tokenField = config.getInputByName("_.xygeniTokenSecretId");
-            tokenField.setText("xytoken");
-            HtmlTextInput textbox = config.getInputByName("_.xygeniUrl");
-            textbox.setText("http://localhost:8080");
-
-            r.submit(config);
+            configureXygeni(r, "http://localhost:8080", "XygeniToken");
 
             assertEquals(
                     "global config Xygeni Token Secret is permanent saved",
-                    "xytoken",
+                    "XygeniToken",
                     XygeniConfiguration.get().getXygeniTokenSecretId());
 
             assertEquals(

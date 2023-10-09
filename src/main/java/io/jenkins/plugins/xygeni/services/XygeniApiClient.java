@@ -32,9 +32,14 @@ public class XygeniApiClient {
 
         XygeniConfiguration descriptor = XygeniConfiguration.get();
 
-        if (descriptor.getXygeniTokenSecretId() == null || descriptor.getXygeniUrl() == null) return null;
+        String url = descriptor.getXygeniUrl();
+        Secret secret = descriptor.getXygeniToken();
 
-        client = new XygeniApiClient(descriptor.getXygeniUrl(), descriptor.getXygeniToken());
+        if (url == null || secret == null) return null;
+
+        client = new XygeniApiClient(url, secret);
+
+        logger.info("new XygeniApiClient instantiate with url " + url);
 
         return client;
     }
@@ -49,6 +54,10 @@ public class XygeniApiClient {
     private XygeniApiClient(String url, Secret tokenSecret) {
         this.url = url;
         this.tokenSecret = tokenSecret;
+    }
+
+    public static void invalidateInstance() {
+        client = null;
     }
 
     public void sendEvent(XygeniEvent event) {
@@ -77,7 +86,7 @@ public class XygeniApiClient {
 
     public boolean validateTokenConnection() {
         try {
-            return post("", url + "/jenkins/check", tokenSecret.getPlainText());
+            return post("{}", url + "/jenkins/check", tokenSecret.getPlainText());
 
         } catch (IOException e) {
             logger.log(Level.WARNING, "[XygeniApiClient] validateTokenConnection error " + e.getMessage());

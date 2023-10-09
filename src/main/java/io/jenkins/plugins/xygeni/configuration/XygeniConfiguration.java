@@ -11,9 +11,11 @@ import java.net.URL;
 import java.util.logging.Logger;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
+import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
@@ -165,6 +167,17 @@ public class XygeniConfiguration extends GlobalConfiguration {
         return CredentialUtil.getSecret(xygeniTokenSecretId);
     }
 
+    @Override
+    public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+        if (!super.configure(req, json)) {
+            return false;
+        }
+
+        // persist global configuration
+        save();
+        return true;
+    }
+
     private boolean isValidUrl() {
 
         if (xygeniUrl == null) return false;
@@ -176,6 +189,12 @@ public class XygeniConfiguration extends GlobalConfiguration {
         }
     }
 
+    @Override
+    public synchronized void save() {
+        super.save();
+        XygeniApiClient.invalidateInstance();
+    }
+
     private boolean isValidToken() {
         if (xygeniTokenSecretId == null) return false;
         try {
@@ -184,5 +203,30 @@ public class XygeniConfiguration extends GlobalConfiguration {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean isEmitConfigEvents() {
+        // deactivate config events (not analyzed yet)
+        return false;
+    }
+
+    public boolean isEmitComputerEvents() {
+        // deactivate computer events (not analyzed yet)
+        return false;
+    }
+
+    public boolean isEmitItemEvents() {
+        // deactivate item events (not analyzed yet)
+        return false;
+    }
+
+    public boolean isEmitBuildEvents() {
+        // deactivate build events (not analyzed yet)
+        return false;
+    }
+
+    public boolean isEmitScmEvents() {
+        // deactivate scm events (not analyzed yet)
+        return false;
     }
 }
