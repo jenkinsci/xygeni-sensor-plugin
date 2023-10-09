@@ -55,7 +55,7 @@ Get in touch today! [Book a demo](https://xygeni.io/book-a-demo?utm_source=jenki
   ![Global Credentials](docs/images/global_credentials.png)
 
 ### 2. Configure Xygeni Sensor plugin settings 
-- In Jenkins, navigate to `Manage Jenkins > Configure System > Xigeni Sensor`,
+- In Jenkins, navigate to `Manage Jenkins > Configure System > Xygeni Sensor`,
     * Set the `Xygeni Token Credential ID` (generated above).
     * Set the `Xygeni API Url` (https://api.xygeni.io).
     * Optionally click the `TestToken` button to check url connection and token validity.
