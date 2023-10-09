@@ -7,6 +7,7 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.xygeni.model.PluginsEvent;
 import io.jenkins.plugins.xygeni.services.XygeniApiClient;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ import jenkins.model.Jenkins;
 @Extension
 public class XygeniPluginsMonitor extends AsyncPeriodicWork {
 
-    private static final long RECURRENCE_PERIOD = 60 * 1000; // 1 minute
+    private static final long RECURRENCE_PERIOD = TimeUnit.MINUTES.toMillis(5); // 5 min
 
     private static final Logger logger = Logger.getLogger(XygeniPluginsMonitor.class.getName());
 
@@ -37,7 +38,6 @@ public class XygeniPluginsMonitor extends AsyncPeriodicWork {
 
     @Override
     protected void execute(TaskListener listener) {
-
         if (!isActivated()) return;
 
         final Jenkins instance = Jenkins.get();
@@ -46,14 +46,27 @@ public class XygeniPluginsMonitor extends AsyncPeriodicWork {
                 .map(pw -> new PluginsEvent.ActivePlugin(pw.getShortName(), pw.getVersion()))
                 .collect(Collectors.toSet());
 
+        PluginsEvent.Action action = getAction(pluginsSnapshot, activePlugins);
+        if (action == null) return; // no change
+
+        updatePluginSnapshot(activePlugins);
+        onAction(activePlugins, action, listener);
+    }
+
+    private PluginsEvent.Action getAction(
+            Set<PluginsEvent.ActivePlugin> pluginsSnapshot, Set<PluginsEvent.ActivePlugin> activePlugins) {
         if (pluginsSnapshot == null) {
-            // load initial plugin list on instance start
-            pluginsSnapshot = activePlugins;
-            onAction(activePlugins, PluginsEvent.Action.onStart, listener);
+            return PluginsEvent.Action.onStart;
         } else if (!pluginsSnapshot.equals(activePlugins)) {
-            // changes on plugin:version are notified
-            onAction(activePlugins, PluginsEvent.Action.onNewPlugins, listener);
+            return PluginsEvent.Action.onNewPlugins;
+        } else {
+            return null;
         }
+    }
+
+    // synchronized as async periodic work could change this concurrently
+    private synchronized void updatePluginSnapshot(Set<PluginsEvent.ActivePlugin> activePlugins) {
+        pluginsSnapshot = activePlugins;
     }
 
     private void onAction(
@@ -67,7 +80,7 @@ public class XygeniPluginsMonitor extends AsyncPeriodicWork {
 
             PluginsEvent event = PluginsEvent.from(activePlugins, action);
 
-            logger.log(Level.FINER, "[XygeniPluginMonitor] send event " + event);
+            logger.log(Level.FINER, "[XygeniPluginMonitor] Sending event: " + event);
 
             client.sendEvent(event);
         } catch (Exception e) {

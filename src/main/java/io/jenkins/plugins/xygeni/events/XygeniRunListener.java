@@ -5,6 +5,7 @@ import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
+import io.jenkins.plugins.xygeni.configuration.XygeniConfiguration;
 import io.jenkins.plugins.xygeni.model.BuildEvent;
 import io.jenkins.plugins.xygeni.services.XygeniApiClient;
 import java.util.logging.Level;
@@ -39,6 +40,9 @@ public class XygeniRunListener extends RunListener<Run> {
     }
 
     public void onAction(Run r, BuildEvent.Action action) {
+
+        if (!XygeniConfiguration.get().isEmitBuildEvents()) return;
+
         try {
             XygeniApiClient client = XygeniApiClient.getInstance();
             if (client == null) {

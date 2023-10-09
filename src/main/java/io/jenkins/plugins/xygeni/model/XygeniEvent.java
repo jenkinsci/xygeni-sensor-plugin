@@ -15,9 +15,9 @@ public abstract class XygeniEvent {
         JSONObject json = new JSONObject();
         json.put("jenkinsUrl", getJenkinsUrl());
         json.put("userId", getCurrentUserId());
-        json.put("eventType", getType());
+        json.put("type", getType());
         json.put("action", getAction());
-        json.put("properties", properties);
+        json.put("parameters", properties);
         json.put("plugin-version", getXygeniVersion());
         return json;
     }
@@ -50,6 +50,6 @@ public abstract class XygeniEvent {
                 + ", userId=" + getCurrentUserId()
                 + ", type=" + getType()
                 + ", action=" + getAction()
-                + ", properties=" + properties + '}';
+                + ", parameters=" + properties + '}';
     }
 }
