@@ -43,6 +43,14 @@ Please note that to utilize this plugin, a license of Xygeni Platform is require
 Get in touch today! [Book a demo](https://xygeni.io/book-a-demo?utm_source=jenkins&utm_medium=marketplace) and let us know how we can help you.
 
 
+Table of contents
+=================
+
+* [Installing the plugin](#installing-the-plugin)
+* [Xygeni Sensor](#xygeni-sensor-unusual-activity)
+* [Running Xygeni Salt Attestation Provenance Step](#xygenisalt-step)
+
+
 # Installing the plugin
 
 ### Requirements:
@@ -61,3 +69,48 @@ Get in touch today! [Book a demo](https://xygeni.io/book-a-demo?utm_source=jenki
     * Optionally click the `TestToken` button to check url connection and token validity.
     * Click the `Save` button. 
     ![Xygeni Configuration](docs/images/xygeni-config.png)
+
+
+
+# Xygeni Sensor Unusual Activity
+
+By installing the Xygeni sensor, user activities and actions will be monitored and suspicious events will be sent to the Xygeni server for analysis.
+
+
+# XygeniSalt Step
+
+## Use Xygeni Salt Step to generate Attestation Provenance
+
+The Xygeni Sensor plugin add a Build Step to generate [SLSA provenance attestations](https://slsa.dev/provenance/).
+This step command will generate an slsa attestation provenance ``xygeni-salt-attestation.json`` in SLSA format and upload attestation to ``salt.xygeni.io`` server.
+
+## Job configuration - Freestyle project
+
+The plugin provides a ```Post-build action``` which will generate SLSA provenace attestations.
+
+**Artifact Path Filter**: Specifies the artifacts to include.
+
+![xygenisalt-provenance.png](docs/images/xygenisalt-provenance.png)
+
+**Manually defined Subject Attestation**: Specifies one or more name and content to include (a string, file or image).
+
+![xygenisalt-manual.png](docs/images/xygenisalt-manual.png)
+
+**Signer configuration**: Add reference or enviroment variable to configure the key, public key and password. Optionally a certificate could be added to avoid a round to verification.
+
+![xygenisalt-signer.png](docs/images/xygenisalt-signer.png)
+
+## Job configuration - Pipeline project
+
+In order to use the plugin with the descriptive pipeline syntax, the following snippet can be added:
+
+```
+...
+post {
+    success {
+        xygeniSalt artifactFilter: '**', subjects: [[name:'image', image:'index.docker.io/my_org/my_image:latest']], key:'my.key', publicKey:'mypub.pem', keyPassword:'passw', kpiFormat: 'x509'
+    }
+}
+...
+```
+
