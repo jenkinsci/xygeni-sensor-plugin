@@ -115,7 +115,7 @@ post {
             xygeniSaltSlsa( 
               artifactFilter: 'target/*.jar', 
               subjects: [[
-                name:'image', 
+                name:'build image', 
                 image:'index.docker.io/my_org/my_image:latest']], 
               key:'my.key', 
               publicKey:'mypub.pem', 
@@ -133,7 +133,7 @@ The plugin provides a ```Post-build action``` which will generate SLSA provenace
 
 **Artifact Path Filter**: Specifies the artifacts to include.
 
-![xygenisalt-provenance.png](docs/images/xygenisalt-provenance.png)
+![xygenisaltslsa-artifactfilter.png](docs/images/xygenisaltslsa-artifactfilter.png)
 
 **Manually defined Subject Attestation**: Specifies one or more name and content to include (a string, file or image).
 
@@ -146,5 +146,7 @@ They could be also passed as environment variables referenced using ``env:VARNAM
 
 Remember to encrypt the signing private ``key`` with a strong password !
 For the ``key-password``, create a Jenkins secret and use the secret name as value for the field.
+
+You can use ``xygeniSalt keygen`` command option to generate and save signing keys to use in this attestation command.
 
 ![xygenisalt-signer.png](docs/images/xygenisalt-signer.png)
