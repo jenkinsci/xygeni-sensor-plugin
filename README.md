@@ -101,7 +101,6 @@ An optional X.509 certificate could be used for helping the software consumer to
 
 The ``pkiFormat`` specifies the signature format (one of ``x509``, ``minisign``, ``ssh``, ``pkcs7`` or ``tuf``). Use ``x509`` as a good default.
 
-![xygenisalt-syntax.png](docs/images/xygenisalt-syntax.png)
 
 #### Adding XygeniSalt-SLSA attestation provenance step to a Pipeline
 
