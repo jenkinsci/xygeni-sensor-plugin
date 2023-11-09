@@ -5,29 +5,40 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Subject;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class XygeniSaltCommand {
+public class XygeniSaltSlsaCommand {
     public static void run(
             Run<?, ?> build,
             Launcher launcher,
             TaskListener listener,
             String key,
-            String keyPass,
-            List<Subject> subjects) {
+            String keyPassword,
+            String publicKey,
+            String pkiFormat,
+            String certificate,
+            List<Subject> subjects,
+            boolean testingMode,
+            String output) {
 
         PrintStream print_stream = null;
         try {
 
             ArgumentListBuilder args = new ArgumentListBuilder();
-            args.add("salt", "at", "slsa", "--never-fail"); // provenance slsa attestation command
+            args.add("salt", "at", "--never-fail", "slsa"); // provenance slsa attestation command
             args.add("--pipeline", build.getFullDisplayName());
 
+            args.add("-k", key);
+            args.add("--key-password=" + keyPassword);
+            args.add("--public-key=" + publicKey);
+            args.add("--pki-format=" + pkiFormat);
+            if (!certificate.isEmpty()) {
+                args.add("--certificate=" + certificate);
+            }
 
             subjects.forEach(subject -> {
                 if (subject.isValue()) {
@@ -36,18 +47,22 @@ public class XygeniSaltCommand {
                 } else if (subject.isFile()) {
                     args.add("-n", subject.getName());
                     args.add("-f", subject.getFile());
+                } else if (subject.isDigest()) {
+                    args.add("-n", subject.getName());
+                    args.add("--digest=" + subject.getFile());
                 } else {
                     args.add("-n", subject.getName());
                     args.add("-i", subject.getImage());
                 }
             });
 
-            args.add("-k", key);
-            args.add("--key-password=" + keyPass);
-
-            // TODO for testing
-            args.add("--dry-run");
-            args.add("-o", "xygeni-salt-result.json");
+            if (testingMode) {
+                args.add("--dry-run");
+                args.add("--pretty-print");
+            }
+            if (!output.isEmpty()) {
+                args.add("-o", output);
+            }
 
             Launcher.ProcStarter ps = launcher.launch();
             ps.cmds(args);
@@ -59,11 +74,7 @@ public class XygeniSaltCommand {
             print_stream = new PrintStream(outFile, StandardCharsets.UTF_8);
             ps.stdout(print_stream);
             ps.quiet(true);
-            boolean[] masks = new boolean[ps.cmds().size()];
-            // masks[passwordIndex] = true; // Mask out password
-            ps.masks(masks);
 
-            ps.masks(masks);
             listener.getLogger().println("Salt Attestation in progress...");
             listener.getLogger().println("" + args.toString());
             ps.join(); // RUN !

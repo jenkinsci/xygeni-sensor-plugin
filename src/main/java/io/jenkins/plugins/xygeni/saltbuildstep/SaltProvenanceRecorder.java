@@ -10,17 +10,17 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
-
+import io.jenkins.plugins.xygeni.saltbuildstep.model.Subject;
+import io.jenkins.plugins.xygeni.util.CredentialUtil;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import io.jenkins.plugins.xygeni.saltbuildstep.model.Subject;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -36,7 +36,11 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
  */
 public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep {
 
-    private final String COMMANDNAME = "xygeniSalt";
+    /** Step name at Pipeline Syntax dropdown and step command name */
+    private static final String STEP_NAME = "xygeniSaltSlsa";
+
+    /** Prefix for PEM-encoded objects */
+    private static final String PEM_PREFIX = "-----BEGIN ";
 
     private static final Logger logger = Logger.getLogger(SaltProvenanceRecorder.class.getName());
 
@@ -50,12 +54,10 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
     private String keyPassword;
     private String pkiFormat;
 
+    private boolean testingMode;
+    private String output;
+
     private List<Subject> subjects;
-
-    // state
-
-    private boolean artifactFilterOn = false;
-    private boolean otherSubjectsOn = false;
 
     // getters/setters
 
@@ -121,38 +123,32 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
         this.subjects = subjects;
     }
 
-    // SUBJECTs STATE
+    public boolean getTestingMode() {
+        return this.testingMode;
+    }
 
     @DataBoundSetter
-    public void setOnArtifactFilter(boolean filterOn) {
-        this.artifactFilterOn = filterOn;
-        if (!this.artifactFilterOn) {
-            this.artifactFilter = null;
-        }
+    public void setTestingMode(boolean testingMode) {
+        this.testingMode = testingMode;
     }
 
-    public boolean getOnArtifactFilter() {
-        return this.artifactFilterOn;
+    public String getOutput() {
+        return this.output;
     }
+
+    @DataBoundSetter
+    public void setOutput(String output) {
+        this.output = output;
+    }
+
+    // STATE
 
     public boolean isArtifactFilterOn() {
-        return this.artifactFilterOn;
-    }
-
-    @DataBoundSetter
-    public void setOnOtherSubjects(boolean othersOn) {
-        this.otherSubjectsOn = othersOn;
-        if (!this.otherSubjectsOn) {
-            this.subjects = null;
-        }
-    }
-
-    public boolean getOnOtherSubjects() {
-        return this.otherSubjectsOn;
+        return artifactFilter != null && !artifactFilter.isEmpty();
     }
 
     public boolean isOtherSubjectsOn() {
-        return this.otherSubjectsOn;
+        return subjects != null && !subjects.isEmpty() && subjects.get(0).getName() != null;
     }
 
     // constructor
@@ -163,7 +159,7 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
     }
 
     public String getName() {
-        return COMMANDNAME;
+        return STEP_NAME;
     }
 
     @Override
@@ -172,37 +168,46 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
             @NonNull FilePath workspace,
             @NonNull EnvVars env,
             @NonNull Launcher launcher,
-            @NonNull TaskListener listener) throws IOException, InterruptedException {
+            @NonNull TaskListener listener)
+            throws IOException, InterruptedException {
 
         PrintStream console = listener.getLogger();
 
         if (run.getResult() != Result.SUCCESS) {
-            console.println("[xygeniSalt] - build not successful, abort generating provenance attestations");
+            console.println("[xygeniSaltSlsa] - build not successful, abort generating provenance attestations");
             return;
         }
 
-        List<Subject> subjects = new ArrayList<>();
+        if (subjects == null) subjects = new ArrayList<>(10);
 
         if (getArtifactFilter() != null) {
-            addSubjects(workspace, env, listener, getArtifactFilter(), subjects);
+            addArtifactSubjects(workspace, env, listener, getArtifactFilter(), subjects);
         }
 
-        if (getSubjects() != null) {
-            subjects.addAll(getSubjects());
-        }
-
-        XygeniSaltCommand.run(
-                run, launcher, listener, getKey(), getKeyPassword(), getSubjects());
+        XygeniSaltSlsaCommand.run(
+                run,
+                launcher,
+                listener,
+                getKey(),
+                getKeyPassword(),
+                getPublicKey(),
+                getPkiFormat(),
+                getCertificate(),
+                subjects,
+                getTestingMode(),
+                getOutput());
     }
 
-    private void addSubjects(FilePath workspace, EnvVars env, TaskListener listener, String artifactFilter, List<Subject> subjects) throws IOException, InterruptedException {
+    private void addArtifactSubjects(
+            FilePath workspace, EnvVars env, TaskListener listener, String artifactFilter, List<Subject> subjects)
+            throws IOException, InterruptedException {
 
         PrintStream console = listener.getLogger();
 
         String expandedFilter = env.expand(artifactFilter);
-        FilePath[] artifacts  = workspace.list(expandedFilter);
+        FilePath[] artifacts = workspace.list(expandedFilter);
 
-        console.println("[xygeniSalt] collecting artifacts");
+        console.println("[xygeniSaltSlsa] collecting artifacts");
 
         for (FilePath artifact : artifacts) {
             console.println(" > " + artifact.getRemote());
@@ -221,7 +226,7 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
     /**
      * Descriptor for {@link SaltProvenanceRecorder}.
      */
-    @Symbol("xygeniSalt")
+    @Symbol("xygeniSaltSlsa")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
@@ -238,7 +243,11 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
             if (key.isEmpty()) {
                 return FormValidation.error("Please set a Key");
             }
-            return FormValidation.ok();
+
+            if (key.startsWith(PEM_PREFIX) || key.startsWith("env:") || key.startsWith("path:"))
+                return FormValidation.ok(); // ok
+
+            return FormValidation.error("Please set a valid key");
         }
 
         @RequirePOST
@@ -246,7 +255,11 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
             if (key.isEmpty()) {
                 return FormValidation.error("Please set a Public Key");
             }
-            return FormValidation.ok();
+
+            if (key.startsWith(PEM_PREFIX) || key.startsWith("env:") || key.startsWith("path:"))
+                return FormValidation.ok(); // ok
+
+            return FormValidation.error("Please set a valid public key.");
         }
 
         @RequirePOST
@@ -254,6 +267,7 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
             if (key.isEmpty()) {
                 return FormValidation.error("Please set a Key Password");
             }
+
             return FormValidation.ok();
         }
 
@@ -283,7 +297,7 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
 
         @NonNull
         public String getDisplayName() {
-            return "Xygeni Salt Attestation Provenance (SLSA) Command";
+            return "Building a Xygeni SLSA provenance attestation";
         }
 
         @Override
@@ -303,6 +317,17 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
             // Apply to all kinds of project types
             return true;
+        }
+
+        private boolean isValidPasswordSecret(String key) {
+            if (key == null) return false;
+            try {
+                StringCredentials credential = CredentialUtil.getCredentialFromId(key);
+                return credential != null
+                        && !credential.getSecret().getPlainText().isEmpty();
+            } catch (Exception e) {
+                return false;
+            }
         }
     }
 }

@@ -17,6 +17,8 @@ public class Subject extends AbstractDescribableImpl<Subject> {
     private String file;
     private String image;
 
+    private String digest;
+
     @Extension
     public static class DescriptorImpl extends Descriptor<Subject> {
         public String getDisplayName() {
@@ -33,16 +35,17 @@ public class Subject extends AbstractDescribableImpl<Subject> {
     }
 
     @DataBoundConstructor
-    public Subject(String name, String value, String file, String image) {
+    public Subject(String name, String value, String file, String image, String digest) {
         this.name = name;
         this.value = value;
         this.file = file;
         this.image = image;
+        this.digest = digest;
     }
 
-    public static Subject of(@NonNull FilePath artifact, @NonNull FilePath workspace){
+    public static Subject of(@NonNull FilePath artifact, @NonNull FilePath workspace) {
         String name = artifact.getName();
-        return new Subject(name, null, artifact.getRemote(), null);
+        return new Subject(name, null, artifact.getRemote(), null, null);
     }
 
     public String getName() {
@@ -61,11 +64,19 @@ public class Subject extends AbstractDescribableImpl<Subject> {
         return image;
     }
 
+    public String getDigest() {
+        return digest;
+    }
+
     public boolean isValue() {
         return (value != null && !value.equals(""));
     }
 
     public boolean isFile() {
         return (file != null && !file.equals(""));
+    }
+
+    public boolean isDigest() {
+        return (digest != null && !digest.equals(""));
     }
 }
