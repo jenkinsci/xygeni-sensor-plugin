@@ -46,22 +46,10 @@ public class XygeniSecurityListener extends SecurityListener {
 
     @Override
     protected void authenticated2(@NonNull UserDetails details) {
+
         try {
-
-            XygeniApiClient client = XygeniApiClient.getInstance();
-            if (client == null) {
-                logger.fine("[XygeniSecurityListener] Client null. Event Not Send.");
-                return;
-            }
-
             String userEmail = UserUtil.getUserConfiguredEmail(details.getUsername());
-
-            SecurityEvent event =
-                    SecurityEvent.from(details.getUsername(), userEmail, SecurityEvent.Action.authenticated);
-
-            logger.finer("[XygeniSecurityListener] Sending event: " + event);
-
-            client.sendEvent(event);
+            sendEvent(details.getUsername(), userEmail, SecurityEvent.Action.authenticated);
 
         } catch (Exception e) {
             logger.severe("[XygeniSecurityListener] Failed to process userCreated event: " + e.getMessage());
@@ -71,20 +59,8 @@ public class XygeniSecurityListener extends SecurityListener {
     @Override
     protected void userCreated(@NonNull String username) {
         try {
-
-            XygeniApiClient client = XygeniApiClient.getInstance();
-            if (client == null) {
-                logger.finer("[XygeniSecurityListener] Client null. Event Not Send.");
-                return;
-            }
-
             String userEmail = UserUtil.getUserConfiguredEmail(username);
-
-            SecurityEvent event = SecurityEvent.from(username, userEmail, SecurityEvent.Action.created);
-
-            logger.finer("[XygeniSecurityListener] Sending event " + event);
-
-            client.sendEvent(event);
+            sendEvent(username, userEmail, SecurityEvent.Action.created);
 
         } catch (Exception e) {
             logger.severe("[XygeniSecurityListener] Failed to process userCreated event: " + e.getMessage());
@@ -93,22 +69,32 @@ public class XygeniSecurityListener extends SecurityListener {
 
     @Override
     protected void failedToLogIn(@NonNull String username) {
-        try {
+        System.out.println("xxx failed");
+        sendEvent(username, SecurityEvent.Action.failedToLogin);
+    }
 
-            XygeniApiClient client = XygeniApiClient.getInstance();
-            if (client == null) {
-                logger.fine("[XygeniSecurityListener] Client null. Event Not Send.");
-                return;
-            }
+    @Override
+    protected void failedToAuthenticate(@NonNull String username) {
+        System.out.println("xxx failed a");
+        sendEvent(username, SecurityEvent.Action.failedToLogin);
+    }
 
-            SecurityEvent event = SecurityEvent.from(username, (String) null, SecurityEvent.Action.failedToLogin);
+    private void sendEvent(String username, SecurityEvent.Action action) {
+        sendEvent(username, null, action);
+    }
 
-            logger.finer("[XygeniSecurityListener] Sending event " + event);
+    private void sendEvent(String username, String userEmail, SecurityEvent.Action action) {
 
-            client.sendEvent(event);
-
-        } catch (Exception e) {
-            logger.severe("[XygeniSecurityListener] Failed to process failedToLogIn event: " + e.getMessage());
+        XygeniApiClient client = XygeniApiClient.getInstance();
+        if (client == null) {
+            logger.fine("[XygeniSecurityListener] Client null. Event Not Send.");
+            return;
         }
+
+        SecurityEvent event = SecurityEvent.from(username, userEmail, action);
+
+        logger.finer("[XygeniSecurityListener] Sending event: " + event);
+
+        client.sendEvent(event);
     }
 }
