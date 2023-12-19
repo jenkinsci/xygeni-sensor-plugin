@@ -1,0 +1,15 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:section title="Attestation Options">
+    <f:entry field="noUpload" title="Do not upload attestations"  help="/plugin/xygeni-sensor/saltbuildstep/help-output.html">
+        <f:checkbox default="false"/>
+    </f:entry>
+    <f:entry field="project" title="Project (default: git repository)" help="/plugin/xygeni-sensor/saltbuildstep/help-project.html">
+        <f:textbox/>
+    </f:entry>
+    <f:entry field="noResultUpload" title="Do not Upload Result" help="/plugin/xygeni-sensor/saltbuildstep/help-noresultupload.html">
+        <f:checkbox default="false"/>
+    </f:entry>
+    </f:section>
+</j:jelly>

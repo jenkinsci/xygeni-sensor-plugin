@@ -10,7 +10,11 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
+import io.jenkins.plugins.xygeni.saltbuildstep.model.AttestationOptions;
+import io.jenkins.plugins.xygeni.saltbuildstep.model.Certs;
+import io.jenkins.plugins.xygeni.saltbuildstep.model.OutputOptions;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Subject;
+import io.jenkins.plugins.xygeni.saltcommand.XygeniSaltAtSlsaCommandBuilder;
 import io.jenkins.plugins.xygeni.util.CredentialUtil;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -28,16 +32,16 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
- * Salt Builder Class.
+ * Salt Provenance Recorder Class.
  * <p>
- * {@link #perform} will be invoke on each build
+ * {@link #perform} will be invoke after each build
  *
  * @author Victor de la Rosa
  */
 public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep {
 
     /** Step name at Pipeline Syntax dropdown and step command name */
-    private static final String STEP_NAME = "xygeniSaltSlsa";
+    private static final String STEP_NAME = "xygeniSalt-Slsa";
 
     /** Prefix for PEM-encoded objects */
     private static final String PEM_PREFIX = "-----BEGIN ";
@@ -47,17 +51,10 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
     // fields
 
     private String artifactFilter;
-
-    private String key;
-    private String publicKey;
-    private String certificate;
-    private String keyPassword;
-    private String pkiFormat;
-
-    private boolean testingMode;
-    private String output;
-
     private List<Subject> subjects;
+    private Certs certs;
+    private AttestationOptions attestationOptions;
+    private OutputOptions outputOptions;
 
     // getters/setters
 
@@ -69,51 +66,6 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
         this.artifactFilter = artifactFilter;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    @DataBoundSetter
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    @DataBoundSetter
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
-
-    public String getCertificate() {
-        return certificate;
-    }
-
-    @DataBoundSetter
-    public void setCertificate(String certificate) {
-        this.certificate = certificate;
-    }
-
-    public String getKeyPassword() {
-        return keyPassword;
-    }
-
-    @DataBoundSetter
-    public void setKeyPassword(String keyPassword) {
-        this.keyPassword = keyPassword;
-    }
-
-    public String getPkiFormat() {
-        return pkiFormat;
-    }
-
-    @DataBoundSetter
-    public void setPkiFormat(String pkiformat) {
-        this.pkiFormat = pkiformat;
-    }
-
     public List<Subject> getSubjects() {
         return subjects;
     }
@@ -123,22 +75,31 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
         this.subjects = subjects;
     }
 
-    public boolean getTestingMode() {
-        return this.testingMode;
+    @DataBoundSetter
+    public void setAttestationOptions(AttestationOptions attestationOptions) {
+        this.attestationOptions = attestationOptions;
     }
 
     @DataBoundSetter
-    public void setTestingMode(boolean testingMode) {
-        this.testingMode = testingMode;
-    }
-
-    public String getOutput() {
-        return this.output;
+    public void setOutputOptions(OutputOptions outputOptions) {
+        this.outputOptions = outputOptions;
     }
 
     @DataBoundSetter
-    public void setOutput(String output) {
-        this.output = output;
+    public void setCerts(Certs certs) {
+        this.certs = certs;
+    }
+
+    public AttestationOptions getAttestationOptions() {
+        return this.attestationOptions;
+    }
+
+    public Certs getCerts() {
+        return this.certs;
+    }
+
+    public OutputOptions getOutputOptions() {
+        return this.outputOptions;
     }
 
     // STATE
@@ -174,7 +135,8 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
         PrintStream console = listener.getLogger();
 
         if (run.getResult() != Result.SUCCESS) {
-            console.println("[xygeniSaltSlsa] - build not successful, abort generating provenance attestations");
+            console.println("[xygeniSaltSlsa] WARN - build not successful, abort generating provenance attestations, "
+                    + "check provenance run in a post section and only when pipeline result is success. ");
             return;
         }
 
@@ -184,18 +146,18 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
             addArtifactSubjects(workspace, env, listener, getArtifactFilter(), subjects);
         }
 
-        XygeniSaltSlsaCommand.run(
-                run,
-                launcher,
-                listener,
-                getKey(),
-                getKeyPassword(),
-                getPublicKey(),
-                getPkiFormat(),
-                getCertificate(),
-                subjects,
-                getTestingMode(),
-                getOutput());
+        new XygeniSaltAtSlsaCommandBuilder(
+                        certs.getKey(),
+                        certs.getKeyPassword(),
+                        certs.getPublicKey(),
+                        certs.getPkiFormat(),
+                        certs.getCertificate(),
+                        subjects)
+                .withRun(run, launcher, listener)
+                .withAttestationOptions(attestationOptions)
+                .withOutputOptions(outputOptions)
+                .build()
+                .run();
     }
 
     private void addArtifactSubjects(
@@ -297,7 +259,7 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
 
         @NonNull
         public String getDisplayName() {
-            return "Building a Xygeni SLSA provenance attestation";
+            return "Build a Xygeni SLSA provenance attestation";
         }
 
         @Override

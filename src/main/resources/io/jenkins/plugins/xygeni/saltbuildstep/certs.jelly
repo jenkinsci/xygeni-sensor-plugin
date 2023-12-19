@@ -1,0 +1,31 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:section title="Signer configuration" name="certs">
+        <f:entry title="keyless" field="keyless" help="/plugin/xygeni-sensor/saltbuildstep/help-keyless.html">
+            <f:checkbox />
+        </f:entry>
+        <f:entry title="key" field="key" help="/plugin/xygeni-sensor/saltbuildstep/help-key.html">
+        <f:textbox />
+        </f:entry>
+        <f:entry title="public-key" field="publicKey" help="/plugin/xygeni-sensor/saltbuildstep/help-publicKey.html">
+        <f:textbox />
+        </f:entry>
+        <f:entry title="certificate (optional)" field="certificate" help="/plugin/xygeni-sensor/saltbuildstep/help-certificate.html">
+        <f:textbox />
+        </f:entry>
+        <f:entry title="key-password (secret-name)" field="keyPassword" help="/plugin/xygeni-sensor/saltbuildstep/help-keyPassword.html">
+        <f:textbox />
+        </f:entry>
+        <f:entry title="pki-format" field="pkiFormat" help="/plugin/xygeni-sensor/saltbuildstep/help-pkiFormat.html">
+        <select name="pkiFormat">
+            <option value="">-</option>
+            <option value="x509" selected="${instance.pkiFormat.equals('x509')? 'true':null}">x509</option>
+            <option value="minisign" selected="${instance.pkiFormat.equals('minisign')? 'true':null}">minisign</option>
+            <option value="ssh" selected="${instance.pkiFormat.equals('ssh')? 'true':null}">ssh</option>
+            <option value="pkcs7" selected="${instance.pkiFormat.equals('pkcs7')? 'true':null}">pkcs7</option>
+            <option value="tuf" selected="${instance.pkiFormat.equals('tuf')? 'true':null}">tuf</option>
+        </select>
+        </f:entry>
+    </f:section>
+</j:jelly>

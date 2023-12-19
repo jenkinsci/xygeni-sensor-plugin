@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <!--
+      per-project configuration.
+    -->
+    <st:include page="/io/jenkins/plugins/xygeni/saltbuildstep/SaltVerifyRecorder/verify.jelly"/>
+
+
+</j:jelly>

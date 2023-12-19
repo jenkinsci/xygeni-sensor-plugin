@@ -1,0 +1,18 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:section title="Output" name="outputOptions">
+    <f:block>
+        <b>Output file (optional)</b>
+    </f:block>
+    <f:entry field="output" help="/plugin/xygeni-sensor/saltbuildstep/help-output.html">
+        <f:textbox />
+    </f:entry>
+    <f:entry field="prettyPrint" title="Pretty Print" help="/plugin/xygeni-sensor/saltbuildstep/help-prettyprint.html">
+        <f:checkbox />
+    </f:entry>
+    <f:entry field="outputUnsigned" title="OutputUnsigned" help="/plugin/xygeni-sensor/saltbuildstep/help-outputunsigned.html">
+        <f:textbox />
+    </f:entry>
+    </f:section>
+</j:jelly>

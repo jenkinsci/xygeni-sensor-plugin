@@ -3,8 +3,13 @@
     <!--
       per-project configuration.
     -->
-    <st:include page="/io/jenkins/plugins/xygeni/saltbuildstep/SaltProvenanceRecorder/subjects.jelly"/>
-    <br/>
+    <f:block>
+        <div>Attestation commit will builds the final attestation as in-toto Statement,
+            serializes it as JSON, signs it with the passed key material,
+            creates an in-toto Envelope with the statement as payload,
+            the signature and the reference for the signing key,
+            and publishes it in the attestation registry</div>
+    </f:block>
     <st:include page="/io/jenkins/plugins/xygeni/saltbuildstep/certs.jelly"/>
     <br/>
     <st:include page="/io/jenkins/plugins/xygeni/saltbuildstep/at_options.jelly"/>

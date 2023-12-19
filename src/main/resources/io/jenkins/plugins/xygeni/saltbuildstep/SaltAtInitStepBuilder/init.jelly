@@ -1,0 +1,29 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+<f:block>
+    <b>Attestors:</b>
+</f:block>
+<f:block>
+    <f:entry title="Attestor Git" field="gitAttestor" help="${rootURL}/descriptor/io.jenkins.plugins.xygeni.saltbuildstep.SaltInitBuilder/help/attestors">
+        <f:checkbox />
+    </f:entry>
+    <f:entry title="Attestor Environment" field="attestorEnv" help="${rootURL}/descriptor/io.jenkins.plugins.xygeni.saltbuildstep.SaltInitBuilder/help/attestors">
+        <f:checkbox />
+    </f:entry>
+</f:block>
+<f:block>
+    <b>Exclude</b>
+</f:block>
+<f:entry field="exclude" help="/plugin/xygeni-sensor/saltbuildstep/help-exclude.html">
+    <f:textbox  />
+</f:entry>
+<f:block>
+    <b>Materials</b>
+
+<f:repeatable field="materials" items="${instance.materials}" minimum="1" var="material">
+    <f:entry title="Material Path" field="material" help="${rootURL}/descriptor/io.jenkins.plugins.xygeni.saltbuildstep.SaltInitBuilder/help/material">
+        <f:textbox />
+    </f:entry>
+</f:repeatable>
+</f:block>
+</j:jelly>

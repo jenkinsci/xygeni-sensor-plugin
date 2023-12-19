@@ -1,0 +1,77 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:block>
+        <div>Attestation verification can be performed by the user of the software the attestation refers to.
+            <br/>   The verification process:
+            <ol>
+                <li>
+                    Computes the digests of the subjects that are passed to the command, following the same syntax as
+                    with the attestation add | provenance commands. Emits a verification failure if any digest do not
+                    match with the digests present in the attestation. This could help with detecting post-build tampering.
+                </li>
+                <li>
+                    Verifies the signature of the attestation payload (statement included in the attestation envelope)
+                    with the public key or certificate passed.
+                </li>
+                <li>If certificate available, verifies the certificate and certificate chain. For ephemeral certificates used
+                    with --keyless, it checks that the certificate was valid at the moment when the attestation was signed, and checks that certificate issuance was registered in the transparency log at the given timestamp.
+                </li>
+            </ol>
+        </div>
+    </f:block>
+
+    <f:block>
+        <b>Attestation source</b>
+        <f:helpLink featureName="atsource" url="/plugin/xygeni-sensor/saltbuildstep/help-attestationsource.html"/>
+        <f:helpArea/>
+    </f:block>
+    <f:entry title="Id" field="id">
+        <f:textbox />
+    </f:entry>
+    <f:entry title="Attestation" field="attestation">
+        <f:textbox />
+    </f:entry>
+
+    <f:entry title="Public Key" field="publicKey" help="/plugin/xygeni-sensor/saltbuildstep/help-verifypublickey.html">
+        <f:textbox />
+    </f:entry>
+
+    <f:entry title="Certificate" field="certificate" help="/plugin/xygeni-sensor/saltbuildstep/help-verifycertificate.html">
+        <f:textbox />
+    </f:entry>
+
+    <f:entry title="Output" field="output" help="/plugin/xygeni-sensor/saltbuildstep/help-output.html">
+        <f:textbox />
+    </f:entry>
+
+<f:block>
+    <b>Subjects</b>
+</f:block>
+
+<f:repeatable field="subjects" items="${instance.subjects}" minimum="1" var="subject">
+    <f:entry title="Subject Name" field="name" help="/plugin/xygeni-sensor/saltbuildstep/help-subjectname.html">
+        <f:textbox />
+    </f:entry>
+        <f:radioBlock checked="${subject.isValue()}" title="Subject Value" inline="true" name="kind" value="string">
+            <f:entry title="Value" field="value">
+                <f:textbox />
+            </f:entry>
+        </f:radioBlock>
+        <f:radioBlock checked="${subject.isFile(kind)}" title="Subject Content File" inline="true" name="kind" value="file">
+            <f:entry title="File path" field="file">
+                <f:textbox />
+            </f:entry>
+        </f:radioBlock>
+        <f:radioBlock checked="${subject.isImage()}" title="Subject Content Image" inline="true" name="kind" value="image">
+            <f:entry title="Image" field="image">
+                <f:textbox />
+            </f:entry>
+        </f:radioBlock>
+        <f:radioBlock checked="${subject.isDigest()}" title="Subject Digest" inline="true" name="kind" value="digest">
+            <f:entry title="Digest" field="digest">
+                <f:textbox />
+            </f:entry>
+        </f:radioBlock>
+    </f:repeatable>
+</j:jelly>

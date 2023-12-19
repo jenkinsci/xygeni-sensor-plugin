@@ -1,0 +1,20 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:section title="Run Options">
+        <f:entry field="step" title="Name of the step" help="/plugin/xygeni-sensor/saltbuildstep/help-step.html">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="maxout" title="Maximum size, in KB, for the stdout captured"  help="/plugin/xygeni-sensor/saltbuildstep/help-maxout.html">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="maxerr" title="Maximum size, in KB, for the stderr captured" help="/plugin/xygeni-sensor/saltbuildstep/help-maxerr.html">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="timeout" title="Timeout, in seconds (do not specify for no timeout)" help="/plugin/xygeni-sensor/saltbuildstep/help-timeout.html">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="command" title="Command-line" help="/plugin/xygeni-sensor/saltbuildstep/help-commandline.html">
+            <f:textbox/>
+        </f:entry>
+    </f:section>
+</j:jelly>
