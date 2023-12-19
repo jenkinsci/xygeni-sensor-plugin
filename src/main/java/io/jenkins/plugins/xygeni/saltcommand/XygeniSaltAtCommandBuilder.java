@@ -86,7 +86,6 @@ public abstract class XygeniSaltAtCommandBuilder {
         addCommandArgs(args, build);
 
         XygeniSaltAtCommand command = new XygeniSaltAtCommand();
-        command.setBuild(build);
         command.setLauncher(launcher);
         command.setListener(listener);
         command.setArgs(args);

@@ -1,14 +1,12 @@
 package io.jenkins.plugins.xygeni.saltcommand;
 
 import hudson.Launcher;
-import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
 import java.io.IOException;
 
 public class XygeniSaltAtCommand {
 
-    private Run<?, ?> build;
     private Launcher launcher;
     private TaskListener listener;
 
@@ -35,10 +33,6 @@ public class XygeniSaltAtCommand {
 
     public ArgumentListBuilder getCommandArgs() {
         return args;
-    }
-
-    public void setBuild(Run<?, ?> build) {
-        this.build = build;
     }
 
     public void setLauncher(Launcher launcher) {
