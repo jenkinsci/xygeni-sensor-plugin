@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form">
     <!--
       per-project configuration.
     -->
@@ -10,10 +10,10 @@
             the signature and the reference for the signing key,
             and publishes it in the attestation registry</div>
     </f:block>
-    <st:include page="/io/jenkins/plugins/xygeni/saltbuildstep/certs.jelly"/>
+    <st:include page="certs.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceRecorder"/>
     <br/>
-    <st:include page="/io/jenkins/plugins/xygeni/saltbuildstep/at_options.jelly"/>
+    <st:include page="at_options.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceRecorder"/>
     <br/>
-    <st:include page="/io/jenkins/plugins/xygeni/saltbuildstep/output_option.jelly"/>
+    <st:include page="output_option.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceRecorder"/>
 
 </j:jelly>
