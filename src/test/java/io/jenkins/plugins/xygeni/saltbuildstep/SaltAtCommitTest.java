@@ -23,7 +23,7 @@ public class SaltAtCommitTest {
     @Test
     void runSaltCommitWithKeyless(@TempDir File tempDir) throws IOException, InterruptedException {
 
-        String expected = "salt at --never-fail commit --pipeline=MyPipeline --basedir=" + tempDir.getPath()
+        String expected = "salt at --never-fail commit --pipeline=MyPipeline --basedir=$WORKSPACE"
                 + " --no-upload --project=MyProject -o out.json --pretty-print --keyless";
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -38,7 +38,7 @@ public class SaltAtCommitTest {
     @Test
     void runSaltCommitWithKey(@TempDir File tempDir) throws IOException, InterruptedException {
 
-        String expected = "salt at --never-fail commit --pipeline=MyPipeline --basedir=" + tempDir.getPath()
+        String expected = "salt at --never-fail commit --pipeline=MyPipeline --basedir=$WORKSPACE"
                 + " --no-upload --project=MyProject -o out.json --pretty-print -k env:KEY --key-password=env:PASS --public-key=env:PUBKEY --pki-format=x509";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(baos);

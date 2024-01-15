@@ -3,6 +3,7 @@ package io.jenkins.plugins.xygeni.saltcommand;
 import hudson.model.Run;
 import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Item;
+import java.util.ArrayList;
 import java.util.List;
 
 public class XygeniSaltAtRunCommandBuilder extends XygeniSaltAtCommandBuilder {
@@ -79,6 +80,18 @@ public class XygeniSaltAtRunCommandBuilder extends XygeniSaltAtCommandBuilder {
                 args.add("--image=" + item.getImage());
             }
         }
-        args.add("--", getCommandLine());
+        args.add(getCommandLineAndOptions(getCommandLine()));
+    }
+
+    /** It will separate command from options adding "--" parameter between */
+    private List<String> getCommandLineAndOptions(String commandLine) {
+        String[] csplit = commandLine.split(" ");
+        if (csplit.length < 2) return List.of(commandLine);
+        List<String> commandAndOptions = new ArrayList<>(csplit.length + 1);
+        for (int i = 0; i < csplit.length; i++) {
+            commandAndOptions.add(csplit[i]);
+            if (i == 0) commandAndOptions.add("--"); // after command add option parameters
+        }
+        return commandAndOptions;
     }
 }

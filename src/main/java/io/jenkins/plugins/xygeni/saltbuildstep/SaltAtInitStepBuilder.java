@@ -5,7 +5,9 @@ import hudson.Extension;
 import hudson.ExtensionList;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.*;
+import hudson.model.AbstractProject;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Material;
@@ -99,7 +101,7 @@ public class SaltAtInitStepBuilder extends Builder implements SimpleBuildStep {
     private List<String> getAttestors() {
         ArrayList<String> attestors = new ArrayList<>();
         if (this.gitAttestor) attestors.add("git");
-        if (this.attestorEnv) attestors.add("env");
+        if (this.attestorEnv) attestors.add("environment");
         return attestors;
     }
 

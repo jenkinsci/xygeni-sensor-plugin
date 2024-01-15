@@ -13,12 +13,14 @@
     <f:entry title="Item Name" field="name">
         <f:textbox />
     </f:entry>
-    <f:entry title="Item Type" field="type" help="/plugin/xygeni-sensor/saltbuildstep/help-type.html">
-        <f:radio name="option" value="material" title="material" />
-        <f:radio name="option" value="product" title="product" />
-        <f:radio name="option" value="statement" title="statement" />
-        <f:radio name="option" value="predicate" title="predicate" />
+
+    <f:entry title="Item Type" help="/plugin/xygeni-sensor/saltbuildstep/help-type.html">
+        <f:radio name="type" id="tmaterial" value="material" title="material" />
+        <f:radio name="type" id="tproduct" value="product" title="product" />
+        <f:radio name="type" id="tstatement" value="statement" title="statement" />
+        <f:radio name="type" id="tpredicate" value="predicate" title="predicate" />
     </f:entry>
+
     <f:entry title="Item Predicate Type" field="predicateType" help="/plugin/xygeni-sensor/saltbuildstep/help-predicateType.html">
         <f:textbox />
     </f:entry>

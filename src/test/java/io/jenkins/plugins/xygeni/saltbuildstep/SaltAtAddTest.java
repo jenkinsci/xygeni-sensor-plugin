@@ -22,7 +22,7 @@ class SaltAtAddTest {
     @Test
     void runSaltAdd(@TempDir File tempDir) throws IOException, InterruptedException {
 
-        String expected = "salt at --never-fail add --pipeline=MyPipeline --basedir=" + tempDir.getPath()
+        String expected = "salt at --never-fail add --pipeline=MyPipeline --basedir=$WORKSPACE"
                 + " --name=my-jar --type=product --digest=sha256:abcdefg";
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

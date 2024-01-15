@@ -23,8 +23,8 @@ class SaltAtRunTest {
     @Test
     void runSaltRun(@TempDir File tempDir) throws IOException, InterruptedException {
 
-        String expected = "salt at --never-fail run --pipeline=MyPipeline --basedir=" + tempDir.getPath()
-                + " -o out.json --pretty-print --max-out=10 --step=my-step --max-err=9 --timeout=11 --name=item-name --type=product --digest=sha256:abcde -- \"run build\"";
+        String expected = "salt at --never-fail run --pipeline=MyPipeline --basedir=$WORKSPACE"
+                + " -o out.json --pretty-print --max-out=10 --step=my-step --max-err=9 --timeout=11 --name=item-name --type=product --digest=sha256:abcde ng -- build --env=prod";
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(baos);
@@ -34,7 +34,7 @@ class SaltAtRunTest {
                 9,
                 "my-step",
                 11,
-                "run build",
+                "ng build --env=prod",
                 List.of(new Item("item-name", "product", null, "", "", "", "sha256:abcde")),
                 tempDir,
                 printStream);

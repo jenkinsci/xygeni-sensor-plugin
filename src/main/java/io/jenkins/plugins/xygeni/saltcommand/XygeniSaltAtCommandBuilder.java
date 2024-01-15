@@ -62,7 +62,7 @@ public abstract class XygeniSaltAtCommandBuilder {
 
         args.add("salt", "at", "--never-fail", getCommand()); // provenance slsa attestation command
         args.add("--pipeline=" + build.getFullDisplayName());
-        args.add("--basedir=" + build.getRootDir().getPath());
+        args.add("--basedir=$WORKSPACE");
 
         if (noUpload) {
             args.add("--no-upload");

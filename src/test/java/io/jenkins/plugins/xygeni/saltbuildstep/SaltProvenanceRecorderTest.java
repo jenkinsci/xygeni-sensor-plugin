@@ -26,7 +26,7 @@ class SaltProvenanceRecorderTest {
     @Test
     void runSaltProvenanceWithKeyless(@TempDir File tempDir) throws IOException, InterruptedException {
 
-        String expected = "salt at --never-fail slsa --pipeline=MyPipeline --basedir=" + tempDir.getPath()
+        String expected = "salt at --never-fail slsa --pipeline=MyPipeline --basedir=$WORKSPACE"
                 + " --no-upload --project=MyProject -o out.json --pretty-print -k --key-password=null --public-key=null --pki-format=null -n subject-name --digest=sha256:abc -n "
                 + tempDir.getName() + " -f " + tempDir.getPath();
 
@@ -44,7 +44,7 @@ class SaltProvenanceRecorderTest {
     @Test
     void runSaltProvenanceWithKey(@TempDir File tempDir) throws IOException, InterruptedException {
 
-        String expected = "salt at --never-fail slsa --pipeline=MyPipeline --basedir=" + tempDir.getPath()
+        String expected = "salt at --never-fail slsa --pipeline=MyPipeline --basedir=$WORKSPACE"
                 + " --no-upload --project=MyProject -o out.json --pretty-print -k env:KEY --key-password=env:PASS --public-key=env:PUBKEY --pki-format=x509 -n subject-name --digest=sha256:abc -n "
                 + tempDir.getName() + " -f " + tempDir.getPath();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
