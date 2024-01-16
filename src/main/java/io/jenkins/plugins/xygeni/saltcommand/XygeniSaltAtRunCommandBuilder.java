@@ -3,35 +3,23 @@ package io.jenkins.plugins.xygeni.saltcommand;
 import hudson.model.Run;
 import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Item;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class XygeniSaltAtRunCommandBuilder extends XygeniSaltAtCommandBuilder {
 
     private static final String INIT_COMMAND = "run";
 
-    private int maxout;
+    private Integer maxout;
     private String step;
-    private int maxerr;
-    private int timeout;
+    private Integer maxerr;
+    private Integer timeout;
     private final List<Item> items;
 
     private String commandline;
 
-    public String getMaxoutString() {
-        return String.valueOf(maxout);
-    }
-
     public String getStep() {
         return step;
-    }
-
-    public String getMaxerrString() {
-        return String.valueOf(maxerr);
-    }
-
-    public String getTimeoutString() {
-        return String.valueOf(timeout);
     }
 
     public List<Item> getItems() {
@@ -43,7 +31,7 @@ public class XygeniSaltAtRunCommandBuilder extends XygeniSaltAtCommandBuilder {
     }
 
     public XygeniSaltAtRunCommandBuilder(
-            int maxout, String step, int maxerr, int timeout, List<Item> items, String commandline) {
+            Integer maxout, String step, Integer maxerr, Integer timeout, List<Item> items, String commandline) {
         this.maxout = maxout;
         this.step = step;
         this.maxerr = maxerr;
@@ -60,10 +48,16 @@ public class XygeniSaltAtRunCommandBuilder extends XygeniSaltAtCommandBuilder {
     @Override
     protected void addCommandArgs(ArgumentListBuilder args, Run<?, ?> build) {
 
-        args.add("--max-out=" + getMaxoutString());
+        if (maxout != null) {
+            args.add("--max-out=" + maxout);
+        }
+        if (maxerr != null) {
+            args.add("--max-err=" + maxerr);
+        }
+        if (timeout != null) {
+            args.add("--timeout=" + timeout);
+        }
         args.add("--step=" + getStep());
-        args.add("--max-err=" + getMaxerrString());
-        args.add("--timeout=" + getTimeoutString());
 
         for (Item item : items) {
             args.add("--name=" + item.getName());
@@ -80,18 +74,10 @@ public class XygeniSaltAtRunCommandBuilder extends XygeniSaltAtCommandBuilder {
                 args.add("--image=" + item.getImage());
             }
         }
-        args.add(getCommandLineAndOptions(getCommandLine()));
-    }
-
-    /** It will separate command from options adding "--" parameter between */
-    private List<String> getCommandLineAndOptions(String commandLine) {
-        String[] csplit = commandLine.split(" ");
-        if (csplit.length < 2) return List.of(commandLine);
-        List<String> commandAndOptions = new ArrayList<>(csplit.length + 1);
-        for (int i = 0; i < csplit.length; i++) {
-            commandAndOptions.add(csplit[i]);
-            if (i == 0) commandAndOptions.add("--"); // after command add option parameters
+        if (commandline != null) {
+            String[] csplit = commandline.split(" ");
+            args.add("--");
+            args.add(Arrays.asList(csplit));
         }
-        return commandAndOptions;
     }
 }

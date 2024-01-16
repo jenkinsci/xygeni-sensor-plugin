@@ -24,7 +24,7 @@ class SaltAtRunTest {
     void runSaltRun(@TempDir File tempDir) throws IOException, InterruptedException {
 
         String expected = "salt at --never-fail run --pipeline=MyPipeline --basedir=" + tempDir.getPath()
-                + " -o out.json --pretty-print --max-out=10 --step=my-step --max-err=9 --timeout=11 --name=item-name --type=product --digest=sha256:abcde ng -- build --env=prod";
+                + " -o out.json --pretty-print --max-out=10 --max-err=9 --timeout=11 --step=my-step --name=item-name --type=product --digest=sha256:abcde -- ng build --env=prod";
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(baos);
@@ -42,6 +42,28 @@ class SaltAtRunTest {
         assertLogContains(expected, baos);
     }
 
+    @Test
+    void runSaltRunWithNullParams(@TempDir File tempDir) throws IOException, InterruptedException {
+
+        String expected = "salt at --never-fail run --pipeline=MyPipeline --basedir=" + tempDir.getPath()
+                + " -o out.json --pretty-print --step=my-step --name=item-name --type=product --digest=sha256:abcde -- ng build --env=prod";
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(baos);
+
+        runAdd(
+                null,
+                null,
+                "my-step",
+                null,
+                "ng build --env=prod",
+                List.of(new Item("item-name", "product", null, "", "", "", "sha256:abcde")),
+                tempDir,
+                printStream);
+
+        assertLogContains(expected, baos);
+    }
+
     private void assertLogContains(String expected, ByteArrayOutputStream baos) {
         String output = baos.toString();
         Assertions.assertTrue(
@@ -49,10 +71,10 @@ class SaltAtRunTest {
     }
 
     private void runAdd(
-            int maxout,
-            int maxerr,
+            Integer maxout,
+            Integer maxerr,
             String step,
-            int timeout,
+            Integer timeout,
             String commandline,
             List<Item> items,
             File tempDir,

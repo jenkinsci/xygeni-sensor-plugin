@@ -35,10 +35,10 @@ public class SaltAtRunStepBuilder extends Builder implements SimpleBuildStep {
 
     private static final Logger logger = Logger.getLogger(SaltAtRunStepBuilder.class.getName());
 
-    private int maxout;
+    private Integer maxout;
     private String step;
-    private int maxerr;
-    private int timeout;
+    private Integer maxerr;
+    private Integer timeout;
 
     private List<Item> items;
 
@@ -48,12 +48,12 @@ public class SaltAtRunStepBuilder extends Builder implements SimpleBuildStep {
 
     private Paths paths;
 
-    public int getMaxout() {
+    public Integer getMaxout() {
         return maxout;
     }
 
     @DataBoundSetter
-    public void setMaxout(int maxout) {
+    public void setMaxout(Integer maxout) {
         this.maxout = maxout;
     }
 
@@ -66,21 +66,21 @@ public class SaltAtRunStepBuilder extends Builder implements SimpleBuildStep {
         this.step = step;
     }
 
-    public int getMaxerr() {
+    public Integer getMaxerr() {
         return maxerr;
     }
 
     @DataBoundSetter
-    public void setMaxerr(int maxerr) {
+    public void setMaxerr(Integer maxerr) {
         this.maxerr = maxerr;
     }
 
-    public int getTimeout() {
+    public Integer getTimeout() {
         return timeout;
     }
 
     @DataBoundSetter
-    public void setTimeout(int timeout) {
+    public void setTimeout(Integer timeout) {
         this.timeout = timeout;
     }
 
