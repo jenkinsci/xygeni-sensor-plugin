@@ -14,6 +14,7 @@ import hudson.tasks.Recorder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.AttestationOptions;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Certs;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.OutputOptions;
+import io.jenkins.plugins.xygeni.saltbuildstep.model.Paths;
 import io.jenkins.plugins.xygeni.saltcommand.XygeniSaltAtCommitCommandBuilder;
 import java.io.PrintStream;
 import java.util.logging.Logger;
@@ -39,6 +40,8 @@ public class SaltAtCommitRecorder extends Recorder implements SimpleBuildStep {
 
     private OutputOptions outputOptions;
 
+    private Paths paths;
+
     @DataBoundSetter
     public void setAttestationOptions(AttestationOptions attestationOptions) {
         this.attestationOptions = attestationOptions;
@@ -54,6 +57,11 @@ public class SaltAtCommitRecorder extends Recorder implements SimpleBuildStep {
         this.outputOptions = outputOptions;
     }
 
+    @DataBoundSetter
+    public void setPaths(Paths paths) {
+        this.paths = paths;
+    }
+
     public AttestationOptions getAttestationOptions() {
         return this.attestationOptions;
     }
@@ -64,6 +72,10 @@ public class SaltAtCommitRecorder extends Recorder implements SimpleBuildStep {
 
     public OutputOptions getOutputOptions() {
         return this.outputOptions;
+    }
+
+    public Paths getPaths() {
+        return paths;
     }
 
     /**
@@ -106,6 +118,7 @@ public class SaltAtCommitRecorder extends Recorder implements SimpleBuildStep {
                 .withRun(run, launcher, listener)
                 .withAttestationOptions(attestationOptions)
                 .withOutputOptions(outputOptions)
+                .withPaths(paths)
                 .build()
                 .run();
     }

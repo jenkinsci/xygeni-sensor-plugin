@@ -10,10 +10,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
-import io.jenkins.plugins.xygeni.saltbuildstep.model.AttestationOptions;
-import io.jenkins.plugins.xygeni.saltbuildstep.model.Certs;
-import io.jenkins.plugins.xygeni.saltbuildstep.model.OutputOptions;
-import io.jenkins.plugins.xygeni.saltbuildstep.model.Subject;
+import io.jenkins.plugins.xygeni.saltbuildstep.model.*;
 import io.jenkins.plugins.xygeni.saltcommand.XygeniSaltAtSlsaCommandBuilder;
 import io.jenkins.plugins.xygeni.util.CredentialUtil;
 import java.io.IOException;
@@ -55,6 +52,7 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
     private Certs certs;
     private AttestationOptions attestationOptions;
     private OutputOptions outputOptions;
+    private Paths paths;
 
     // getters/setters
 
@@ -90,6 +88,11 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
         this.certs = certs;
     }
 
+    @DataBoundSetter
+    public void setPaths(Paths paths) {
+        this.paths = paths;
+    }
+
     public AttestationOptions getAttestationOptions() {
         return this.attestationOptions;
     }
@@ -100,6 +103,10 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
 
     public OutputOptions getOutputOptions() {
         return this.outputOptions;
+    }
+
+    public Paths getPaths() {
+        return paths;
     }
 
     // STATE
@@ -156,6 +163,7 @@ public class SaltProvenanceRecorder extends Recorder implements SimpleBuildStep 
                 .withRun(run, launcher, listener)
                 .withAttestationOptions(attestationOptions)
                 .withOutputOptions(outputOptions)
+                .withPaths(paths)
                 .build()
                 .run();
     }

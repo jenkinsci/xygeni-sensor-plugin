@@ -6,6 +6,7 @@ import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.AttestationOptions;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.OutputOptions;
+import io.jenkins.plugins.xygeni.saltbuildstep.model.Paths;
 
 public abstract class XygeniSaltAtCommandBuilder {
 
@@ -14,6 +15,11 @@ public abstract class XygeniSaltAtCommandBuilder {
     private Run<?, ?> build;
     private Launcher launcher;
     private TaskListener listener;
+
+    /** salt command path, if null it will run as it is in the env PATH  */
+    private String saltCommandPath;
+
+    private String basedir;
     private String output;
     private boolean prettyPrint = false;
     private String outputUnsigned;
@@ -29,6 +35,14 @@ public abstract class XygeniSaltAtCommandBuilder {
         this.build = build;
         this.launcher = launcher;
         this.listener = listener;
+        return this;
+    }
+
+    public XygeniSaltAtCommandBuilder withPaths(Paths paths) {
+        if (paths != null) {
+            this.saltCommandPath = paths.getSaltCommandPath();
+            this.basedir = paths.getBasedir();
+        }
         return this;
     }
 
@@ -60,26 +74,38 @@ public abstract class XygeniSaltAtCommandBuilder {
 
     public XygeniSaltAtCommand build() {
 
-        args.add("salt", "at", "--never-fail", getCommand()); // provenance slsa attestation command
+        // salt command path
+        if (saltCommandPath != null && !saltCommandPath.isBlank()) {
+            args.add(this.saltCommandPath);
+        } else {
+            args.add("salt");
+        }
+
+        args.add("at", "--never-fail", getCommand()); // provenance slsa attestation command
         args.add("--pipeline=" + build.getFullDisplayName());
-        args.add("--basedir=$WORKSPACE");
+
+        if (basedir != null && !basedir.isBlank()) {
+            args.add("--basedir=" + this.basedir);
+        } else {
+            args.add("--basedir=" + build.getRootDir().getPath());
+        }
 
         if (noUpload) {
             args.add("--no-upload");
         }
-        if (project != null && !project.isEmpty()) {
+        if (project != null && !project.isBlank()) {
             args.add("--project=" + project);
         }
         if (noResultUpload) {
             args.add("--no-result-upload");
         }
-        if (output != null && !output.isEmpty()) {
+        if (output != null && !output.isBlank()) {
             args.add("-o", output);
         }
         if (prettyPrint) {
             args.add("--pretty-print");
         }
-        if (outputUnsigned != null && !outputUnsigned.isEmpty()) {
+        if (outputUnsigned != null && !outputUnsigned.isBlank()) {
             args.add("--output-unsigned=" + outputUnsigned);
         }
 

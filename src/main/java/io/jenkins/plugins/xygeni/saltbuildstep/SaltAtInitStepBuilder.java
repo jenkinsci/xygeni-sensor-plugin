@@ -11,6 +11,7 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Material;
+import io.jenkins.plugins.xygeni.saltbuildstep.model.Paths;
 import io.jenkins.plugins.xygeni.saltcommand.XygeniSaltAtInitCommandBuilder;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class SaltAtInitStepBuilder extends Builder implements SimpleBuildStep {
     private String exclude;
 
     private List<Material> materials;
+
+    private Paths paths;
 
     @DataBoundSetter
     public void setGitAttestor(boolean gitAttestor) {
@@ -74,8 +77,17 @@ public class SaltAtInitStepBuilder extends Builder implements SimpleBuildStep {
         this.materials = materials;
     }
 
+    @DataBoundSetter
+    public void setPaths(Paths paths) {
+        this.paths = paths;
+    }
+
     public List<Material> getMaterials() {
         return this.materials;
+    }
+
+    public Paths getPaths() {
+        return paths;
     }
 
     @DataBoundConstructor
@@ -94,6 +106,7 @@ public class SaltAtInitStepBuilder extends Builder implements SimpleBuildStep {
 
         new XygeniSaltAtInitCommandBuilder(getAttestors(), getExclude(), getMaterials())
                 .withRun(run, launcher, listener)
+                .withPaths(paths)
                 .build()
                 .run();
     }

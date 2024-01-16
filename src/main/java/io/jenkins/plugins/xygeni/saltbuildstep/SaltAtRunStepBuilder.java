@@ -12,6 +12,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Item;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.OutputOptions;
+import io.jenkins.plugins.xygeni.saltbuildstep.model.Paths;
 import io.jenkins.plugins.xygeni.saltcommand.XygeniSaltAtRunCommandBuilder;
 import java.io.PrintStream;
 import java.util.List;
@@ -44,6 +45,8 @@ public class SaltAtRunStepBuilder extends Builder implements SimpleBuildStep {
     private String command;
 
     private OutputOptions outputOptions;
+
+    private Paths paths;
 
     public int getMaxout() {
         return maxout;
@@ -104,6 +107,15 @@ public class SaltAtRunStepBuilder extends Builder implements SimpleBuildStep {
         this.outputOptions = outputOptions;
     }
 
+    @DataBoundSetter
+    public void setPaths(Paths paths) {
+        this.paths = paths;
+    }
+
+    public Paths getPaths() {
+        return paths;
+    }
+
     public OutputOptions getOutputOptions() {
         return this.outputOptions;
     }
@@ -128,6 +140,7 @@ public class SaltAtRunStepBuilder extends Builder implements SimpleBuildStep {
         new XygeniSaltAtRunCommandBuilder(getMaxout(), getStep(), getMaxerr(), getTimeout(), getItems(), getCommand())
                 .withRun(run, launcher, listener)
                 .withOutputOptions(outputOptions)
+                .withPaths(paths)
                 .build()
                 .run();
     }

@@ -1,0 +1,19 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:section title="Command Options" name="paths">
+        <f:block>
+            <b>Salt Command Path (optional)</b>
+        </f:block>
+        <f:entry field="saltCommandPath" help="/plugin/xygeni-sensor/saltbuildstep/help-saltCommandPath.html">
+            <f:textbox />
+        </f:entry>
+
+        <f:block>
+            <b>Basedir (optional)</b>
+        </f:block>
+        <f:entry field="basedir" help="/plugin/xygeni-sensor/saltbuildstep/help-basedir.html">
+            <f:textbox />
+        </f:entry>
+    </f:section>
+</j:jelly>

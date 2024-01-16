@@ -11,6 +11,7 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Item;
+import io.jenkins.plugins.xygeni.saltbuildstep.model.Paths;
 import io.jenkins.plugins.xygeni.saltcommand.XygeniSaltAtAddCommandBuilder;
 import java.io.PrintStream;
 import java.util.List;
@@ -32,6 +33,8 @@ public class SaltAtAddStepBuilder extends Builder implements SimpleBuildStep {
 
     private List<Item> items;
 
+    private Paths paths;
+
     @DataBoundSetter
     public void setItems(List<Item> items) {
         this.items = items;
@@ -39,6 +42,15 @@ public class SaltAtAddStepBuilder extends Builder implements SimpleBuildStep {
 
     public List<Item> getItems() {
         return this.items;
+    }
+
+    @DataBoundSetter
+    public void setPaths(Paths paths) {
+        this.paths = paths;
+    }
+
+    public Paths getPaths() {
+        return paths;
     }
 
     @DataBoundConstructor
@@ -57,6 +69,7 @@ public class SaltAtAddStepBuilder extends Builder implements SimpleBuildStep {
 
         new XygeniSaltAtAddCommandBuilder(getItems())
                 .withRun(run, launcher, listener)
+                .withPaths(paths)
                 .build()
                 .run();
     }

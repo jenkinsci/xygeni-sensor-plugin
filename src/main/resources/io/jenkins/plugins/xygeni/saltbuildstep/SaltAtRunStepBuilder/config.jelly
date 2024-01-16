@@ -5,5 +5,7 @@
     -->
     <st:include page="run.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltAtRunStepBuilder"/>
     <st:include page="items.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltAtRunStepBuilder"/>
+    <br/>
+    <st:include page="paths_options.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceRecorder"/>
 
 </j:jelly>

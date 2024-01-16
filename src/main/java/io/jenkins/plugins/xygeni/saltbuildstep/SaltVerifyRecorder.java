@@ -11,6 +11,7 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
+import io.jenkins.plugins.xygeni.saltbuildstep.model.Paths;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Subject;
 import io.jenkins.plugins.xygeni.saltcommand.XygeniSaltVerifyCommandBuilder;
 import java.io.PrintStream;
@@ -38,6 +39,8 @@ public class SaltVerifyRecorder extends Recorder implements SimpleBuildStep {
     private String attestation;
 
     private List<Subject> subjects;
+
+    private Paths paths;
 
     @DataBoundSetter
     public void setOutput(String output) {
@@ -69,6 +72,11 @@ public class SaltVerifyRecorder extends Recorder implements SimpleBuildStep {
         this.subjects = subjects;
     }
 
+    @DataBoundSetter
+    public void setPaths(Paths paths) {
+        this.paths = paths;
+    }
+
     public String getOutput() {
         return this.output;
     }
@@ -93,6 +101,10 @@ public class SaltVerifyRecorder extends Recorder implements SimpleBuildStep {
         return this.subjects;
     }
 
+    public Paths getPaths() {
+        return paths;
+    }
+
     @DataBoundConstructor
     public SaltVerifyRecorder(String output, String publicKey, String certificate, String id, String attestation) {
         this.output = output;
@@ -115,6 +127,7 @@ public class SaltVerifyRecorder extends Recorder implements SimpleBuildStep {
 
         new XygeniSaltVerifyCommandBuilder(output, publicKey, certificate, id, attestation, subjects)
                 .withRun(run, launcher, listener)
+                .withPaths(paths)
                 .build()
                 .run();
     }

@@ -24,7 +24,7 @@ class SaltVerifyTest {
     @Test
     void runVerifyId(@TempDir File tempDir) throws IOException, InterruptedException {
 
-        String expected = "salt at --never-fail verify --pipeline=MyPipeline --basedir=$WORKSPACE"
+        String expected = "salt at --never-fail verify --pipeline=MyPipeline --basedir=" + tempDir.getPath()
                 + " -o target/** -k env:PUBKEY --id=at-id -n subject-name --digest=sha256:abc";
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -41,7 +41,7 @@ class SaltVerifyTest {
     @Test
     void runVerifyAttestation(@TempDir File tempDir) throws IOException, InterruptedException {
 
-        String expected = "salt at --never-fail verify --pipeline=MyPipeline --basedir=$WORKSPACE"
+        String expected = "salt at --never-fail verify --pipeline=MyPipeline --basedir=" + tempDir.getPath()
                 + " -o target/** -k env:PUBKEY --attestation=at-file.json -n subject-name --digest=sha256:abc";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(baos);

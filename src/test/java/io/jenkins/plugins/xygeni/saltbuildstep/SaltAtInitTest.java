@@ -22,7 +22,7 @@ class SaltAtInitTest {
     @Test
     void runSaltAdd(@TempDir File tempDir) throws IOException, InterruptedException {
 
-        String expected = "salt at --never-fail init --pipeline=MyPipeline --basedir=$WORKSPACE"
+        String expected = "salt at --never-fail init --pipeline=MyPipeline --basedir=" + tempDir.getPath()
                 + " --attestor=git --attestor=environment --exclude=**/*Test* --materials=src/";
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -50,6 +50,7 @@ class SaltAtInitTest {
 
         Run mockRun = Mockito.mock(Run.class);
         Mockito.when(mockRun.getResult()).thenReturn(Result.SUCCESS);
+        Mockito.when(mockRun.getRootDir()).thenReturn(tempDir);
         Mockito.when(mockRun.getFullDisplayName()).thenReturn("MyPipeline");
 
         TaskListener mockTList = Mockito.mock(TaskListener.class);
