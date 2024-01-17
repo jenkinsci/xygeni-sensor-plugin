@@ -5,7 +5,7 @@ import hudson.model.TaskListener;
 import hudson.util.ArgumentListBuilder;
 import java.io.IOException;
 
-public class XygeniSaltAtCommand {
+public class XygeniSaltCommand {
 
     private Launcher launcher;
     private TaskListener listener;

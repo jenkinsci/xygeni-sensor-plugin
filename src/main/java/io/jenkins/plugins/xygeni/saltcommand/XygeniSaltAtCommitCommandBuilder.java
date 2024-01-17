@@ -3,7 +3,7 @@ package io.jenkins.plugins.xygeni.saltcommand;
 import hudson.model.Run;
 import hudson.util.ArgumentListBuilder;
 
-public class XygeniSaltAtCommitCommandBuilder extends XygeniSaltAtCommandBuilder {
+public class XygeniSaltAtCommitCommandBuilder extends XygeniSaltCommandBuilder {
 
     private static final String COMMIT_COMMAND = "commit";
 
@@ -28,6 +28,11 @@ public class XygeniSaltAtCommitCommandBuilder extends XygeniSaltAtCommandBuilder
     @Override
     protected String getCommand() {
         return COMMIT_COMMAND;
+    }
+
+    @Override
+    protected boolean isAttestationCommand() {
+        return true;
     }
 
     @Override

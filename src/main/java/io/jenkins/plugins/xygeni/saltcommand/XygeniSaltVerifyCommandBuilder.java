@@ -5,7 +5,7 @@ import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Subject;
 import java.util.List;
 
-public class XygeniSaltVerifyCommandBuilder extends XygeniSaltAtCommandBuilder {
+public class XygeniSaltVerifyCommandBuilder extends XygeniSaltCommandBuilder {
 
     private static final String VERIFY_COMMAND = "verify";
 

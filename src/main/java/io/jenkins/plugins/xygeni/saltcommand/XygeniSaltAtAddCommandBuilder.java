@@ -5,7 +5,7 @@ import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Item;
 import java.util.List;
 
-public class XygeniSaltAtAddCommandBuilder extends XygeniSaltAtCommandBuilder {
+public class XygeniSaltAtAddCommandBuilder extends XygeniSaltCommandBuilder {
 
     private static final String ADD_COMMAND = "add";
 
@@ -18,6 +18,11 @@ public class XygeniSaltAtAddCommandBuilder extends XygeniSaltAtCommandBuilder {
     @Override
     protected String getCommand() {
         return ADD_COMMAND;
+    }
+
+    @Override
+    protected boolean isAttestationCommand() {
+        return true;
     }
 
     @Override

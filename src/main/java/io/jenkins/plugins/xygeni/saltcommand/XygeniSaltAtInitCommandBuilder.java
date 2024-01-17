@@ -5,7 +5,7 @@ import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Material;
 import java.util.List;
 
-public class XygeniSaltAtInitCommandBuilder extends XygeniSaltAtCommandBuilder {
+public class XygeniSaltAtInitCommandBuilder extends XygeniSaltCommandBuilder {
 
     private static final String INIT_COMMAND = "init";
 
@@ -22,6 +22,11 @@ public class XygeniSaltAtInitCommandBuilder extends XygeniSaltAtCommandBuilder {
     @Override
     protected String getCommand() {
         return INIT_COMMAND;
+    }
+
+    @Override
+    protected boolean isAttestationCommand() {
+        return true;
     }
 
     @Override

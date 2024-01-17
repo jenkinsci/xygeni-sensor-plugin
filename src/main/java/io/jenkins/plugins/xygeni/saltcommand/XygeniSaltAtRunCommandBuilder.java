@@ -6,7 +6,7 @@ import io.jenkins.plugins.xygeni.saltbuildstep.model.Item;
 import java.util.Arrays;
 import java.util.List;
 
-public class XygeniSaltAtRunCommandBuilder extends XygeniSaltAtCommandBuilder {
+public class XygeniSaltAtRunCommandBuilder extends XygeniSaltCommandBuilder {
 
     private static final String INIT_COMMAND = "run";
 
@@ -43,6 +43,11 @@ public class XygeniSaltAtRunCommandBuilder extends XygeniSaltAtCommandBuilder {
     @Override
     protected String getCommand() {
         return INIT_COMMAND;
+    }
+
+    @Override
+    protected boolean isAttestationCommand() {
+        return true;
     }
 
     @Override

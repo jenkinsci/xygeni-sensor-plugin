@@ -8,7 +8,7 @@ import io.jenkins.plugins.xygeni.saltbuildstep.model.AttestationOptions;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.OutputOptions;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Paths;
 
-public abstract class XygeniSaltAtCommandBuilder {
+public abstract class XygeniSaltCommandBuilder {
 
     private ArgumentListBuilder args;
 
@@ -27,18 +27,23 @@ public abstract class XygeniSaltAtCommandBuilder {
     private String project;
     private boolean noResultUpload;
 
-    XygeniSaltAtCommandBuilder() {
+    /** if this is an attestation command (salt at ---) */
+    protected boolean isAttestationCommand() {
+        return false;
+    }
+
+    XygeniSaltCommandBuilder() {
         this.args = new ArgumentListBuilder();
     }
 
-    public XygeniSaltAtCommandBuilder withRun(Run<?, ?> build, Launcher launcher, TaskListener listener) {
+    public XygeniSaltCommandBuilder withRun(Run<?, ?> build, Launcher launcher, TaskListener listener) {
         this.build = build;
         this.launcher = launcher;
         this.listener = listener;
         return this;
     }
 
-    public XygeniSaltAtCommandBuilder withPaths(Paths paths) {
+    public XygeniSaltCommandBuilder withPaths(Paths paths) {
         if (paths != null) {
             this.saltCommandPath = paths.getSaltCommandPath();
             this.basedir = paths.getBasedir();
@@ -46,7 +51,7 @@ public abstract class XygeniSaltAtCommandBuilder {
         return this;
     }
 
-    public XygeniSaltAtCommandBuilder withAttestationOptions(AttestationOptions attestationOptions) {
+    public XygeniSaltCommandBuilder withAttestationOptions(AttestationOptions attestationOptions) {
         if (attestationOptions == null) attestationOptions = new AttestationOptions(false, null, false);
         this.noUpload = attestationOptions.getNoUpload();
         this.project = attestationOptions.getProject();
@@ -54,7 +59,7 @@ public abstract class XygeniSaltAtCommandBuilder {
         return this;
     }
 
-    public XygeniSaltAtCommandBuilder withOutputOptions(OutputOptions outputOptions) {
+    public XygeniSaltCommandBuilder withOutputOptions(OutputOptions outputOptions) {
         if (outputOptions == null) outputOptions = new OutputOptions(null, false, null);
         this.output = outputOptions.getOutput();
         this.prettyPrint = outputOptions.getPrettyPrint();
@@ -72,7 +77,7 @@ public abstract class XygeniSaltAtCommandBuilder {
      */
     protected abstract void addCommandArgs(ArgumentListBuilder args, Run<?, ?> build);
 
-    public XygeniSaltAtCommand build() {
+    public XygeniSaltCommand build() {
 
         // salt command path
         if (saltCommandPath != null && !saltCommandPath.isBlank()) {
@@ -81,7 +86,10 @@ public abstract class XygeniSaltAtCommandBuilder {
             args.add("salt");
         }
 
-        args.add("at", "--never-fail", getCommand()); // provenance slsa attestation command
+        if (isAttestationCommand()) {
+            args.add("at");
+        }
+        args.add("--never-fail", getCommand()); // provenance slsa attestation command
         args.add("--pipeline=" + build.getFullDisplayName());
 
         if (basedir != null && !basedir.isBlank()) {
@@ -111,7 +119,7 @@ public abstract class XygeniSaltAtCommandBuilder {
 
         addCommandArgs(args, build);
 
-        XygeniSaltAtCommand command = new XygeniSaltAtCommand();
+        XygeniSaltCommand command = new XygeniSaltCommand();
         command.setLauncher(launcher);
         command.setListener(listener);
         command.setArgs(args);
