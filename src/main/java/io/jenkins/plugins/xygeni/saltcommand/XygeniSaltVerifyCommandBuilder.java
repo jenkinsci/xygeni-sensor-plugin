@@ -56,18 +56,22 @@ public class XygeniSaltVerifyCommandBuilder extends XygeniSaltCommandBuilder {
             args.add("--attestation=" + attestation);
         }
 
-        for (Subject subject : subjects) {
-            if (subject.getName() != null) {
-                args.add("-n", subject.getName());
-            }
-            if (subject.isValue()) {
-                args.add("-v", subject.getValue());
-            } else if (subject.isFile()) {
-                args.add("-f", subject.getFile());
-            } else if (subject.isDigest()) {
-                args.add("--digest=" + subject.getDigest());
-            } else {
-                args.add("-i", subject.getImage());
+        if (subjects != null) {
+            for (Subject subject : subjects) {
+                if (subject.getName() != null) {
+                    args.add("-n", subject.getName());
+                }
+                if (subject.isValue()) {
+                    args.add("-v", subject.getValue());
+                } else if (subject.isFile()) {
+                    args.add("-f", subject.getFile());
+                } else {
+                    args.add("-i", subject.getImage());
+                }
+
+                if (subject.getDigest() != null) {
+                    args.add("--digest=" + subject.getDigest());
+                }
             }
         }
     }

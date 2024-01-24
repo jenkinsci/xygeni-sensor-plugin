@@ -1,5 +1,6 @@
 package io.jenkins.plugins.xygeni.saltcommand;
 
+import hudson.EnvVars;
 import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -13,6 +14,8 @@ public abstract class XygeniSaltCommandBuilder {
     private ArgumentListBuilder args;
 
     private Run<?, ?> build;
+
+    private EnvVars env;
     private Launcher launcher;
     private TaskListener listener;
 
@@ -38,6 +41,14 @@ public abstract class XygeniSaltCommandBuilder {
 
     public XygeniSaltCommandBuilder withRun(Run<?, ?> build, Launcher launcher, TaskListener listener) {
         this.build = build;
+        this.launcher = launcher;
+        this.listener = listener;
+        return this;
+    }
+
+    public XygeniSaltCommandBuilder withRun(Run<?, ?> build, Launcher launcher, TaskListener listener, EnvVars env) {
+        this.build = build;
+        this.env = env;
         this.launcher = launcher;
         this.listener = listener;
         return this;
@@ -88,9 +99,11 @@ public abstract class XygeniSaltCommandBuilder {
 
         if (isAttestationCommand()) {
             args.add("at");
+            args.add("--never-fail");
+            args.add("--pipeline=" + build.getFullDisplayName());
         }
-        args.add("--never-fail", getCommand()); // provenance slsa attestation command
-        args.add("--pipeline=" + build.getFullDisplayName());
+
+        args.add(getCommand());
 
         if (basedir != null && !basedir.isBlank()) {
             args.add("--basedir=" + this.basedir);
@@ -122,6 +135,7 @@ public abstract class XygeniSaltCommandBuilder {
         XygeniSaltCommand command = new XygeniSaltCommand();
         command.setLauncher(launcher);
         command.setListener(listener);
+        command.setEnvVars(env);
         command.setArgs(args);
         return command;
     }

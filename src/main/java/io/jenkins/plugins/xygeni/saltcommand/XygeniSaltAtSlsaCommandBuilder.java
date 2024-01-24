@@ -9,26 +9,32 @@ public class XygeniSaltAtSlsaCommandBuilder extends XygeniSaltCommandBuilder {
 
     private static final String SLSA_COMMAND = "slsa";
 
-    private final String key;
-    private final String keyPassword;
-    private final String publicKey;
-    private final String pkiFormat;
-    private final String certificate;
+    private String key;
+    private String keyPassword;
+    private String publicKey;
+    private String pkiFormat;
+    private String certificate;
+
+    private boolean keyless = false;
     private final List<Subject> subjects;
 
-    public XygeniSaltAtSlsaCommandBuilder(
-            String key,
-            String keyPassword,
-            String publicKey,
-            String pkiFormat,
-            String certificate,
-            List<Subject> subjects) {
+    public XygeniSaltAtSlsaCommandBuilder(List<Subject> subjects) {
+        this.subjects = subjects;
+    }
+
+    public XygeniSaltAtSlsaCommandBuilder withKey(
+            String key, String keyPassword, String publicKey, String pkiFormat, String certificate) {
         this.key = key;
         this.keyPassword = keyPassword;
         this.publicKey = publicKey;
         this.pkiFormat = pkiFormat;
         this.certificate = certificate;
-        this.subjects = subjects;
+        return this;
+    }
+
+    public XygeniSaltAtSlsaCommandBuilder withKeyless() {
+        this.keyless = true;
+        return this;
     }
 
     @Override
@@ -44,27 +50,29 @@ public class XygeniSaltAtSlsaCommandBuilder extends XygeniSaltCommandBuilder {
     @Override
     protected void addCommandArgs(ArgumentListBuilder args, Run<?, ?> build) {
 
-        args.add("-k", key);
-        args.add("--key-password=" + keyPassword);
-        args.add("--public-key=" + publicKey);
-        args.add("--pki-format=" + pkiFormat);
-        if (certificate != null && !certificate.isEmpty()) {
-            args.add("--certificate=" + certificate);
+        if (keyless) {
+            args.add("--keyless");
+        } else {
+            args.add("-k", key);
+            args.add("--key-password=" + keyPassword);
+            args.add("--public-key=" + publicKey);
+            args.add("--pki-format=" + pkiFormat);
+            if (certificate != null && !certificate.isEmpty()) {
+                args.add("--certificate=" + certificate);
+            }
         }
 
         subjects.forEach(subject -> {
+            args.add("-n", subject.getName());
             if (subject.isValue()) {
-                args.add("-n", subject.getName());
                 args.add("-v", subject.getValue());
             } else if (subject.isFile()) {
-                args.add("-n", subject.getName());
                 args.add("-f", subject.getFile());
-            } else if (subject.isDigest()) {
-                args.add("-n", subject.getName());
-                args.add("--digest=" + subject.getDigest());
             } else {
-                args.add("-n", subject.getName());
                 args.add("-i", subject.getImage());
+            }
+            if (subject.getDigest() != null && !subject.getDigest().isBlank()) {
+                args.add("--digest=" + subject.getDigest());
             }
         });
     }

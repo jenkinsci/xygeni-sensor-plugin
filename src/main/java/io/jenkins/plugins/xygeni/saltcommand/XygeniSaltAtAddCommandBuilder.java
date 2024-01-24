@@ -28,22 +28,26 @@ public class XygeniSaltAtAddCommandBuilder extends XygeniSaltCommandBuilder {
     @Override
     protected void addCommandArgs(ArgumentListBuilder args, Run<?, ?> build) {
 
-        for (Item item : items) {
-            args.add("--name=" + item.getName());
-            if (item.getType() != null) {
-                args.add("--type=" + item.getType());
-                if (item.getType().equals(Item.Type.predicate.name())) {
-                    args.add("--predicate-type=" + item.getPredicateType());
+        if (items != null) {
+            for (Item item : items) {
+                args.add("--name=" + item.getName());
+                if (item.getType() != null) {
+                    args.add("--type=" + item.getType());
+                    if (item.getType().equals(Item.Type.predicate.name())) {
+                        args.add("--predicate-type=" + item.getPredicateType());
+                    }
                 }
-            }
-            if (item.isValue()) {
-                args.add("--value=" + item.getValue());
-            } else if (item.isFile()) {
-                args.add("--file=" + item.getFile());
-            } else if (item.isDigest()) {
-                args.add("--digest=" + item.getDigest());
-            } else {
-                args.add("--image=" + item.getImage());
+                if (item.isValue()) {
+                    args.add("--value=" + item.getValue());
+                } else if (item.isFile()) {
+                    args.add("--file=" + item.getFile());
+                } else {
+                    args.add("--image=" + item.getImage());
+                }
+
+                if (item.getDigest() != null && !item.getDigest().isBlank()) {
+                    args.add("--digest=" + item.getDigest());
+                }
             }
         }
     }

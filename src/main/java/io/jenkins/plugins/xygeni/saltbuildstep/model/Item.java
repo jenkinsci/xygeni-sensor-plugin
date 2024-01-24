@@ -4,11 +4,12 @@ import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import java.io.Serializable;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
-public class Item extends AbstractDescribableImpl<Item> {
+public class Item extends AbstractDescribableImpl<Item> implements Serializable {
 
     public enum Type {
         material,
@@ -112,9 +113,5 @@ public class Item extends AbstractDescribableImpl<Item> {
 
     public boolean isImage() {
         return (image != null && !image.equals(""));
-    }
-
-    public boolean isDigest() {
-        return (digest != null && !digest.equals(""));
     }
 }

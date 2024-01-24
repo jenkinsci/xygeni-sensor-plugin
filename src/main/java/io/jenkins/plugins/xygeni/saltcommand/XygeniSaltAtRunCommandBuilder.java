@@ -22,10 +22,6 @@ public class XygeniSaltAtRunCommandBuilder extends XygeniSaltCommandBuilder {
         return step;
     }
 
-    public List<Item> getItems() {
-        return this.items;
-    }
-
     public String getCommandLine() {
         return this.commandline;
     }
@@ -62,21 +58,27 @@ public class XygeniSaltAtRunCommandBuilder extends XygeniSaltCommandBuilder {
         if (timeout != null) {
             args.add("--timeout=" + timeout);
         }
-        args.add("--step=" + getStep());
+        if (step != null) {
+            args.add("--step=" + step);
+        }
 
-        for (Item item : items) {
-            args.add("--name=" + item.getName());
-            if (item.getType() != null) {
-                args.add("--type=" + item.getType());
-            }
-            if (item.isValue()) {
-                args.add("--value=" + item.getValue());
-            } else if (item.isFile()) {
-                args.add("--file=" + item.getFile());
-            } else if (item.isDigest()) {
-                args.add("--digest=" + item.getDigest());
-            } else {
-                args.add("--image=" + item.getImage());
+        if (items != null) {
+            for (Item item : items) {
+                args.add("--name=" + item.getName());
+                if (item.getType() != null) {
+                    args.add("--type=" + item.getType());
+                }
+                if (item.isValue()) {
+                    args.add("--value=" + item.getValue());
+                } else if (item.isFile()) {
+                    args.add("--file=" + item.getFile());
+                } else {
+                    args.add("--image=" + item.getImage());
+                }
+
+                if (item.getDigest() != null && !item.getDigest().isBlank()) {
+                    args.add("--digest=" + item.getDigest());
+                }
             }
         }
         if (commandline != null) {

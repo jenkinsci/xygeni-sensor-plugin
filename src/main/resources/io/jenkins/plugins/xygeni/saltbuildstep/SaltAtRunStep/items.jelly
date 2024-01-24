@@ -34,10 +34,8 @@
                 <f:textbox />
             </f:entry>
         </f:radioBlock>
-        <f:radioBlock checked="${item.isDigest()}" title="Item Digest" inline="true" name="kind" value="digest">
-            <f:entry title="Digest" field="digest">
-                <f:textbox />
-            </f:entry>
-        </f:radioBlock>
+        <f:entry title="Content Digest" field="digest" help="/plugin/xygeni-sensor/saltbuildstep/help-item.html">
+            <f:textbox />
+        </f:entry>
     </f:repeatable>
 </j:jelly>

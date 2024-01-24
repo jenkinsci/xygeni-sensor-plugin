@@ -3,8 +3,9 @@
     <!--
       per-project configuration.
     -->
-    <st:include page="init.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltAtInitStep"/>
+    <st:include page="add.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltAtAddStep"/>
     <br/>
     <st:include page="paths_options.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceStep"/>
+
 
 </j:jelly>

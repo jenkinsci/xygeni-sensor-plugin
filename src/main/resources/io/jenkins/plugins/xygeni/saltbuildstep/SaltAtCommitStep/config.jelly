@@ -10,12 +10,12 @@
             the signature and the reference for the signing key,
             and publishes it in the attestation registry</div>
     </f:block>
-    <st:include page="certs.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceRecorder"/>
+    <st:include page="certs.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceStep"/>
     <br/>
-    <st:include page="at_options.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceRecorder"/>
+    <st:include page="at_options.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceStep"/>
     <br/>
-    <st:include page="output_option.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceRecorder"/>
+    <st:include page="output_option.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceStep"/>
     <br/>
-    <st:include page="paths_options.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceRecorder"/>
+    <st:include page="paths_options.jelly" class="io.jenkins.plugins.xygeni.saltbuildstep.SaltProvenanceStep"/>
 
 </j:jelly>

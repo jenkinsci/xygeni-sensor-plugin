@@ -6,11 +6,12 @@ import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import java.io.Serializable;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
-public class Subject extends AbstractDescribableImpl<Subject> {
+public class Subject extends AbstractDescribableImpl<Subject> implements Serializable {
 
     private String name;
     private String value;
@@ -74,9 +75,5 @@ public class Subject extends AbstractDescribableImpl<Subject> {
 
     public boolean isFile() {
         return (file != null && !file.equals(""));
-    }
-
-    public boolean isDigest() {
-        return (digest != null && !digest.equals(""));
     }
 }
