@@ -7,8 +7,6 @@ import hudson.util.FormValidation;
 import hudson.util.Secret;
 import io.jenkins.plugins.xygeni.services.XygeniApiClient;
 import io.jenkins.plugins.xygeni.util.CredentialUtil;
-import java.net.URL;
-import java.util.logging.Logger;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
@@ -18,9 +16,12 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.interceptor.RequirePOST;
 
+import java.net.URL;
+import java.util.logging.Logger;
+
 /**
  * Global configuration of Xygeni Plugin.
- * </p>
+ * <p>
  * Xygeni Plugin require Xygeni Api url (use cloud production by default),
  * and a Xygeni Api Token generate by customer administrator to connect to Xygeni api.
  * </p>
