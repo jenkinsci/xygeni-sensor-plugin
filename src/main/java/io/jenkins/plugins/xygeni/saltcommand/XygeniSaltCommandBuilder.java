@@ -83,8 +83,7 @@ public abstract class XygeniSaltCommandBuilder {
     /**
      * Handle non-general command args to compose final command call.
      * Required args will not be checked here, it should be reported by salt command.
-     * @param args
-     * @param build
+     *
      */
     protected abstract void addCommandArgs(ArgumentListBuilder args, Run<?, ?> build);
 

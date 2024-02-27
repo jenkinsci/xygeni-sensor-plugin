@@ -20,7 +20,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
  * Global configuration of Xygeni Plugin.
- * </p>
+ * <p>
  * Xygeni Plugin require Xygeni Api url (use cloud production by default),
  * and a Xygeni Api Token generate by customer administrator to connect to Xygeni api.
  * </p>

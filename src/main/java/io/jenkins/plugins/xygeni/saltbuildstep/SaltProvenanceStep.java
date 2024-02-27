@@ -24,8 +24,6 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
  * Salt Provenance Recorder Class.
- * <p>
- * {@link #perform} will be invoke after each build
  *
  * @author Victor de la Rosa
  */

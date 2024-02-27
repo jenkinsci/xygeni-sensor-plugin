@@ -72,9 +72,9 @@ public class SaltAtCommitStep extends Step {
      * Instance a Salt Attestation Commit command.
      * Required args will not be checked here, it should be reported by salt command.
      * If not options are informed, a default configuration is provided.
-     * @param certs
-     * @param attestationOptions
-     * @param outputOptions
+     * @param certs certificates option
+     * @param attestationOptions attestation option
+     * @param outputOptions output options
      */
     @DataBoundConstructor
     public SaltAtCommitStep(
