@@ -9,12 +9,6 @@ import hudson.model.TaskListener;
 import hudson.util.FormValidation;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.*;
 import io.jenkins.plugins.xygeni.saltcommand.XygeniSaltAtSlsaCommandBuilder;
-import org.jenkinsci.plugins.workflow.steps.*;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.interceptor.RequirePOST;
-
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -22,6 +16,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.jenkinsci.plugins.workflow.steps.*;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /**
  * Salt Provenance Recorder Class.

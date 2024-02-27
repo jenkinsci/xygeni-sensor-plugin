@@ -10,13 +10,12 @@ import io.jenkins.plugins.xygeni.saltbuildstep.model.Certs;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.OutputOptions;
 import io.jenkins.plugins.xygeni.saltbuildstep.model.Paths;
 import io.jenkins.plugins.xygeni.saltcommand.XygeniSaltAtCommitCommandBuilder;
-import org.jenkinsci.plugins.workflow.steps.*;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Set;
+import org.jenkinsci.plugins.workflow.steps.*;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * Salt Attestation Commit Command Builder Class.
