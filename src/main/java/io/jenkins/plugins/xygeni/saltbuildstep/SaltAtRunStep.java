@@ -19,8 +19,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * Salt Attestation Run Command Builder Class.
- * <p>
- *
  *
  * @author Victor de la Rosa
  */

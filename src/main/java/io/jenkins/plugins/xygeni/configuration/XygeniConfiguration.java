@@ -23,7 +23,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
  * <p>
  * Xygeni Plugin require Xygeni Api url (use cloud production by default),
  * and a Xygeni Api Token generate by customer administrator to connect to Xygeni api.
- * </p>
+ * <p>
  * Xygeni Api Token should be saved as credential secret at Jenkins instance and pass here as secret-id.
  *
  * @author Victor de la Rosa
