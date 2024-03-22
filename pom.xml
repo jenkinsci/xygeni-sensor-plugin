@@ -10,7 +10,7 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>xygeni-sensor</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>1.1</version>
 
   <packaging>hpi</packaging>
 
@@ -29,7 +29,7 @@
   <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
     <connection>scm:git:https://github.com/${gitHubRepo}</connection>
     <developerConnection>scm:git:https://github.com/${gitHubRepo}</developerConnection>
-    <tag>${scmTag}</tag>
+    <tag>xygeni-sensor-1.1</tag>
     <url>https://github.com/${gitHubRepo}</url>
   </scm>
 
