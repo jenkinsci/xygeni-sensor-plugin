@@ -35,7 +35,7 @@
 
   <properties>
     <revision>1.1</revision>
-    <changelist></changelist>
+    <changelist/>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.version>2.387.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
