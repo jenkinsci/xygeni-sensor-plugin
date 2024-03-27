@@ -10,7 +10,7 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>xygeni-sensor</artifactId>
-  <version>1.2</version>
+  <version>${revision}${changelist}</version>
 
   <packaging>hpi</packaging>
 
@@ -34,7 +34,7 @@
   </scm>
 
   <properties>
-    <revision>1.2</revision>
+    <revision>1.3</revision>
     <changelist>-SNAPSHOT</changelist>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.version>2.387.3</jenkins.version>
