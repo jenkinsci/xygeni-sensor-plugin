@@ -1,5 +1,6 @@
 package io.jenkins.plugins.xygeni.model;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.EnvVars;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@SuppressFBWarnings("SS_SHOULD_BE_STATIC")
 public class SCMEvent extends XygeniEvent {
 
     private final String TYPE_CLASS = "scmEvent";
