@@ -1,5 +1,7 @@
 <?jelly escape-by-default='true'?>
 <div>
+    This plugin enables monitor unusual activity and integrate Xygeni Scanner and Software Attestation in a pipeline.
+
     Xygeni is a Software Supply Chain Security platform that provides visibility, security, and integrity in DevOps
     environments, reducing the risk of breaches and detecting potential attacks. It ensures end-to-end software
     development and delivery security in your software releases.
