@@ -6,13 +6,13 @@ import io.jenkins.plugins.xygeni.model.XygeniEvent;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 
 /**
  * Xygeni platform Jenkins Events api client
@@ -105,9 +105,9 @@ public class XygeniApiClient {
         httpGet.setHeader("Content-type", "application/json");
 
         try (CloseableHttpClient client = HttpClients.createDefault();
-                CloseableHttpResponse response = client.execute(httpGet)) {
+                ClassicHttpResponse response = client.execute(httpGet, classicHttpResponse -> classicHttpResponse)) {
 
-            final int statusCode = response.getStatusLine().getStatusCode();
+            final int statusCode = response.getCode();
             if (statusCode == HttpStatus.SC_OK) return true;
             logger.fine("[XygeniApiClient] HttpGet error: " + statusCode + " requesting: " + url);
         }
@@ -133,9 +133,9 @@ public class XygeniApiClient {
         }
 
         try (CloseableHttpClient client = HttpClients.createDefault();
-                CloseableHttpResponse response = client.execute(httpPost)) {
+                ClassicHttpResponse response = client.execute(httpPost, classicHttpResponse -> classicHttpResponse)) {
 
-            final int statusCode = response.getStatusLine().getStatusCode();
+            final int statusCode = response.getCode();
             if (statusCode == HttpStatus.SC_OK) return true;
             logger.fine("[XygeniApiClient] HttpPost error: " + statusCode + " requesting: " + url);
         }
