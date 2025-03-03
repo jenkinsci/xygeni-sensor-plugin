@@ -2,7 +2,7 @@
 
 # Protect the integrity and security of your software assets, pipelines and infrastructure
 
-[Xygeni](https://xygeni.io/?utm_source=jenkins&utm_medium=marketplace)  seamlessly evaluates the security posture of every asset of your Software Development Life Cycle (SDLC). It offers automated asset discovery and a comprehensive inventory, ensuring total transparency over your software projects. Cataloguing all artefacts, resources, and dependencies aids in making informed decisions for asset protection and implementing preventive and mitigative strategies.
+[Xygeni](https://xygeni.io/?utm_source=jenkins&utm_medium=marketplace)  seamlessly evaluates the security posture of every asset of your Software Development Life Cycle (SDLC). It offers automated asset discovery and a comprehensive inventory, ensuring total transparency over your software projects. Cataloging all artifacts, resources, and dependencies aids in making informed decisions for asset protection and implementing preventive and mitigative strategies.
 
 Stay proactive with Xygeni's integrated anomaly detection. This feature safeguards your business operations by identifying unusual patterns that indicate emerging threats. Our code tampering prevention ensures the integrity of critical pipelines and files, and enforces security and build procedures. Additionally, Xygeni allows you to proactively identify risky or suspicious user actions, providing automated real-time alerts.
 
@@ -16,7 +16,7 @@ Assess the security posture of all of the components in your SDLC effortlessly u
 
 ## Prevention and remediation
 
-Systematically prevent and remediate risks everywhere in the Software Supply Chain, including open-source packages, pipelines, artefacts, runtime assets and infrastructure.
+Systematically prevent and remediate risks everywhere in the Software Supply Chain, including open-source packages, pipelines, artifacts, runtime assets and infrastructure.
 
 ![docs/images/xygeni-prevention.png](docs/images/xygeni-prevention.png)
 
@@ -75,7 +75,7 @@ Table of contents
 
 # Xygeni pipeline-compatible Steps
 
-The Xygeni Sensor plugin add some pipeline-compatible steps that helps using ``Software Attestations Layer for Trust (XygeniSalt)`` tool by Xygeni Security in the pipeline.
+The Xygeni Sensor plugin adds some pipeline-compatible steps that help using the ``Software Attestations Layer for Trust (XygeniSalt)`` tool by Xygeni Security in the pipeline.
 
 ## Xygeni-Salt Custom Attestation
 Creating and verifying software attestations is the core of the SALT framework. Attestations in SALT follow the in-toto Attestations Framework.
@@ -90,7 +90,7 @@ Creates the initial draft with initial information
 Adds elements (material, subject, product or statement) to the current draft attestation.
 
 ### Run Step
-Runs a command and add an attestation predicate for the command execution.
+Runs a command and adds an attestation predicate for the command execution.
 
 ### Commit Step
 Builds the final attestation as in-toto Statement, serializes it as JSON, signs it with the passed key material, creates an in-toto Envelope with the statement as payload, the signature and the reference for the signing key, and publishes it in the attestation registry.
@@ -101,12 +101,12 @@ Builds the final attestation as in-toto Statement, serializes it as JSON, signs 
 
 Software attestations provide context (metadata) about artifacts like versions, origins (provenance) of the source code and its git repository plus branch / tag, the build process from which it was created, dependencies or security checks passed. The attestation is typically a signed document that gives software consumers a trusted context on the built artifacts. A common attestation format is SLSA provenance.
 
-The Xygeni Sensor plugin add a Post Build Step to generate [SLSA provenance attestations](https://slsa.dev/provenance/).
+The Xygeni Sensor plugin adds a Post Build Step to generate [SLSA provenance attestations](https://slsa.dev/provenance/).
 This step command will generate an slsa attestation provenance ``xygeni-salt-attestation.json`` in SLSA format and upload attestation to ``salt.xygeni.io`` server.
 
 ### Job configuration - Pipeline project
 
-**Pipeline Syntax tool** could helps to define ``xygeniSalt`` steps with their arguments. 
+**Pipeline Syntax tool** could help to define ``xygeniSalt`` steps with their arguments. 
 
  * The ``xygeniSaltAt(Init|Add|Run|Commit)``  steps could be invoked for generating custom SALT attestations. 
  * The ``xygeniSaltSlsa`` post step could be invoked for generating SALT provenance. Build information for the registered attestation **subjects** (also known as software 'products' or 'artifacts') will be registered in the signed attestation.
@@ -147,7 +147,7 @@ To authenticate the Jenkins build, Fulcio needs an OpenID Connect (OIDC) id toke
 
 Jobs running in Jenkins runners use the plugin's OIDC provider that authenticates the job and generates a short-lived OIDC ID token. The OIDC plugin will store the token either in an environment variable or in a CI/CD file, so the `xygeniSalt commit` or `xygeniSaltSlsa` commands will fetch it to use for authentication with Fulcio CA.The variable and the path are configured in the `conf/salt.yaml` file, and the default values are `SIGSTORE_ID_TOKEN` or `/var/run/sigstore/cosign/oidc-token` path, respectively.
 
-The ephemeral certificate has a life of 10 minutes, and the event is registered in a transparency log. Verifiers of the attestation can check that the certificate was valid at the moment where the attestation was signed, and validate the certificate chain. The identity (the Jenkins build URI) will be registered as an URI field in the X509 certificate's SAN (Subject Alternative Name), so the verifier knows which jenkins job created the attestation. For full details, read [Certificate Issuing Overview](https://docs.sigstore.dev/certificate_authority/certificate-issuing-overview/).
+The ephemeral certificate has a life of 10 minutes, and the event is registered in a transparency log. Verifiers of the attestation can check that the certificate was valid at the moment where the attestation was signed, and validate the certificate chain. The identity (the Jenkins build URI) will be registered as an URI field in the X509 certificate's SAN (Subject Alternative Name), so the verifier knows which Jenkins job created the attestation. For full details, read [Certificate Issuing Overview](https://docs.sigstore.dev/certificate_authority/certificate-issuing-overview/).
 
 #### Adding XygeniSalt-SLSA attestation provenance step to a Pipeline
 
@@ -231,7 +231,4 @@ The plugin provides following actions:
    * **XygeniSaltAtRun** to capture a build step
  * ```Post-build actions``` 
    * **XygeniSaltAtCommit** to sign and publish a draft attestation.
-   * **XygeniSaltSlsa** which will generate SLSA provenace attestations.
-
-
-
+   * **XygeniSaltSlsa** which will generate SLSA provenance attestations.
