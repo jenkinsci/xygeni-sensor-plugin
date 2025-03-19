@@ -3,9 +3,9 @@ package io.jenkins.plugins.xygeni.model;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Computer;
 import hudson.model.labels.LabelAtom;
+import java.util.ArrayList;
 import java.util.List;
 import jenkins.model.Jenkins;
-import org.apache.commons.compress.utils.Lists;
 
 public class ComputerEvent extends XygeniEvent {
 
@@ -38,7 +38,7 @@ public class ComputerEvent extends XygeniEvent {
             value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
             justification = "False positive computer.getNode()")
     private static String getComputerLabels(Computer computer) {
-        List<String> labels = Lists.newArrayList();
+        List<String> labels = new ArrayList<>();
 
         if (computer.getNode() == null) return "";
 
